@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    #ide {
+      display: flex;
+      flex-direction: row;
+      width: 500px;
+      height: 500px;
+      border: 1px solid #8884;
+      cursor: text;
+      position: relative;
+    }
+    ::selection {
+      background-color: rgba(0, 0, 255, 0); /* Blue with 20% opacity */
+      color: inherit; /* Maintain text color */
+    }
+    .newline {
+      height: 20px;
+      width: 100%;
+      position: absolute;
+      border-bottom: 1px solid #8842;
+      background-color: #88888839; /* Background color with alpha (rgba) */
+    }
+    .text-pipe {
+      display: inline-block;
+      animation: blink 1s infinite;
+      color: #000;
+      font-weight: bold;
+    }
+
+    @keyframes blink {
+      0%,
+      100% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+  </style>
+  <body>
+    <div id="ide"></div>
+  </body>
+  <script src="./main.js"></script>
+</html>
