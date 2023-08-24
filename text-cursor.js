@@ -1,4 +1,5 @@
 document.addEventListener("click", (e) => {
+  return;
   let range;
   let textNode;
   let offset;
@@ -25,3 +26,6 @@ document.addEventListener("click", (e) => {
   s.remove();
   updateTextCursor({ left: finalLeftCoord });
 });
+function updateTextCursor() {
+  getLineRow().appendChild(generateTextCursor());
+}

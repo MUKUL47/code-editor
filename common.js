@@ -1,13 +1,18 @@
 function E(e, properties = {}) {
   const ele = document.createElement(e);
   if (properties.attributes) {
-    for (let a in properties.attributes || {}) {
+    for (const a in properties.attributes || {}) {
       ele.setAttribute(a, properties.attributes[a]);
     }
   }
   if (properties.style) {
-    for (let s in properties.style) {
+    for (const s in properties.style) {
       ele.style[s] = properties.style[s];
+    }
+  }
+  if (properties.data) {
+    for (const data in properties.data) {
+      ele[data] = properties.data[data];
     }
   }
   ele.id = properties.id || "";

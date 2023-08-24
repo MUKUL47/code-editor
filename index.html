@@ -34,14 +34,13 @@
       display: inline-block;
       animation: blink 1s infinite;
       color: #000;
-      font-weight: bold;
       height: 15px;
       position: absolute;
       padding: 0px 0.35px;
       background: #000;
     }
 
-    @keyframes blink {
+    /* @keyframes blink {
       0%,
       100% {
         opacity: 0;
@@ -49,17 +48,15 @@
       50% {
         opacity: 1;
       }
-    }
+    } */
   </style>
   <body>
-    <div id="ide">
-      <span class="text-pipe" id="TEXT_CURSOR"></span>
-    </div>
+    <div id="ide"></div>
   </body>
   <script src="./variables.js"></script>
   <script src="./common.js"></script>
   <script src="./editor-helper.js"></script>
-  <script src="./main.js"></script>
+  <script src="./event-listener.js"></script>
   <script src="./editor-typer.js"></script>
   <script src="./text-cursor.js"></script>
 </html>
