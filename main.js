@@ -1,7 +1,3 @@
-let activeRowIndex = -1;
-let finalRowIndex = -1;
-const IDE = window["ide"];
-const TEXT_CURSOR = window["TEXT_CURSOR"];
 function span() {
   return document.createElement("span");
 }
@@ -28,6 +24,7 @@ function addNewLine() {
 function addNewTextSpan() {
   const s = span();
   s.setAttribute("content", !!1);
+  s.setAttribute("index", 0);
   getLineRow()?.appendChild(s);
 }
 function getLineRow() {
@@ -36,24 +33,32 @@ function getLineRow() {
 addNewLine();
 updateTextCursor();
 IDE.addEventListener("click", (e) => {
-  activeRowIndex = e.target.getAttribute("row-index") ?? finalRowIndex;
+  activeRowIndex =
+    e.srcElement.parentElement.hasAttribute("row-index") ||
+    e.target.hasAttribute("row-index")
+      ? e.srcElement.parentElement.getAttribute("row-index") ||
+        e.target.getAttribute("row-index")
+      : finalRowIndex;
   updateTextCursor();
 });
 function getActiveRow() {
   return document.querySelector(`div[row-index="${activeRowIndex}"]`);
 }
-function getLastRowOfLine() {
+function getLastRowChild() {
   const row = getActiveRow();
   return row.children[row.children.length - 1];
+}
+function updateOrAddNewLine() {
+  if (activeRowIndex === finalRowIndex) {
+    addNewLine();
+  } else {
+    activeRowIndex++;
+  }
 }
 window.addEventListener("keydown", (event) => {
   const code = event.code.toLowerCase(); //Alt Space
   if (code === "enter") {
-    if (activeRowIndex === finalRowIndex) {
-      addNewLine();
-    } else {
-      activeRowIndex++;
-    }
+    updateOrAddNewLine();
     updateTextCursor();
     return;
   }
@@ -61,17 +66,16 @@ window.addEventListener("keydown", (event) => {
   const isValidKey = keyCode >= 32 && keyCode <= 126;
   //get latest span and append the key;
   const row = document.querySelector(`div[row-index="${activeRowIndex}"]`); //IDE.children[activeRowIndex];
-  const lastSpan = getLastRowOfLine();
-  let newRow;
+  const lastSpan = getLastRowChild();
   if (["space", "tab"].includes(code)) {
     //check if last span contains space or tab use that else append new
-    newRow = addNonBreakingSpace({ lastSpan, row });
+    addNonBreakingSpace({ lastSpan, row });
   } else if (isValidKey) {
-    newRow = addText({ lastSpan, row, event });
+    addText({ lastSpan, row, event });
   } else if (code === "backspace") {
-    newRow = onBackspace({ lastSpan, row });
+    onBackspace({ lastSpan, row });
   }
-  updateTextCursor(newRow || lastSpan);
+  updateTextCursor();
 });
 function addNonBreakingSpace({ lastSpan, row }) {
   if (lastSpan.innerHTML.includes("&nbsp;")) {
@@ -80,6 +84,7 @@ function addNonBreakingSpace({ lastSpan, row }) {
     const s = span();
     s.setAttribute("content", !!1);
     s.innerHTML = "&nbsp";
+    s.setAttribute("index", getActiveRow().children.length);
     row.appendChild(s);
     return s;
   }
@@ -93,13 +98,13 @@ function onBackspace({ lastSpan, row }) {
     activeRowIndex > 0
   ) {
     activeRowIndex--;
-    return getLastRowOfLine();
+    return getLastRowChild();
   }
   const sliceIdx = wasSpaceLast(lastSpan) ? 6 : 1;
   lastSpan.innerHTML = lastSpan.innerHTML.slice(0, len - sliceIdx);
   if (!!!lastSpan.innerHTML.length && row.children.length > 1) {
     lastSpan.remove();
-    return getLastRowOfLine();
+    return getLastRowChild();
   }
   return lastSpan;
 }
@@ -110,19 +115,33 @@ function addText({ lastSpan, row, event }) {
   if (wasSpaceLast(lastSpan)) {
     const s = span();
     s.innerHTML = event.key;
+    s.setAttribute("index", getActiveRow().children.length);
     s.setAttribute("content", !!1);
     row.appendChild(s);
     return row;
   }
   lastSpan.innerHTML += event.key;
+  // checkIfLastSpanOverflow();
 }
-function updateTextCursor() {
-  TEXT_CURSOR.style.left = "0px"; //`${e.clientX - spanE.getBoundingClientRect().left}px`;
-  TEXT_CURSOR.style.top = `${activeRowIndex * 15}px`; //`${e.clientY - spanE.getBoundingClientRect().top}px`;
+//PENDINGdassad
+function checkIfLastSpanOverflow() {
+  const span = getLastRowChild();
+  const spanDomRect = span.getBoundingClientRect();
+  if (IDE_DOMRECT.right < spanDomRect.right) {
+    if (!wasSpaceLast(span)) {
+      const content = span.innerHTML;
+      span.remove();
+      updateOrAddNewLine();
+      const newSpan = getLastRowChild();
+      newSpan.innerHTML = content;
+    }
+  }
 }
-function updateTextCursor() {
-  const spanTextElement = getLastRowOfLine();
+function updateTextCursor(customCoords) {
+  const { left } = customCoords || {};
+  const spanTextElement = getLastRowChild();
   TEXT_CURSOR.style.top = `${activeRowIndex * 15}px`;
-  TEXT_CURSOR.style.left =
-    spanTextElement.offsetLeft + spanTextElement.offsetWidth + "px";
+  TEXT_CURSOR.style.left = customCoords
+    ? left + "px"
+    : spanTextElement.offsetLeft + spanTextElement.offsetWidth + "px";
 }

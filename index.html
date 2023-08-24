@@ -6,6 +6,9 @@
     <title>Document</title>
   </head>
   <style>
+    body {
+      margin: 0;
+    }
     #ide {
       display: flex;
       flex-direction: row;
@@ -23,6 +26,7 @@
       height: 15px;
       width: 100%;
       position: absolute;
+      letter-spacing: -0.5px;
       border-bottom: 1px solid #8842;
       background-color: #88888839; /* Background color with alpha (rgba) */
     }
@@ -52,5 +56,7 @@
       <span class="text-pipe" id="TEXT_CURSOR"></span>
     </div>
   </body>
+  <script src="./variables.js"></script>
   <script src="./main.js"></script>
+  <script src="./text-cursor.js"></script>
 </html>
