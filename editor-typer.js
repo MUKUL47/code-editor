@@ -9,13 +9,13 @@ function updateActiveRowIdx(e) {
   activeSpanElement = parentE.hasAttribute("content") ? parentE : target;
 }
 function onBackspace(event) {
-  const lastSpan = getLastRowChild();
-  const len = lastSpan.innerHTML.length;
+  const activeLastSpan = getLastRowChild();
+  const len = activeLastSpan.innerHTML.length;
   const spanChildren = getSpanChildren();
   if (
     //row is empty move to previous row
     spanChildren.length === 1 &&
-    !!!lastSpan.innerHTML.length &&
+    !!!activeLastSpan.innerHTML.length &&
     activeRowIndex > 0
   ) {
     getLineRow(activeRowIndex).remove();
@@ -25,30 +25,22 @@ function onBackspace(event) {
       IDE.children[i].setAttribute("row-index", i);
     }
     activeRowIndex--;
-    return getLastRowChild();
+    return activeLastSpan;
   }
-  const sliceIdx = wasSpaceLast(lastSpan) ? 6 : 1;
-  lastSpan.innerHTML = lastSpan.innerHTML.slice(0, len - sliceIdx);
-  if (!!!lastSpan.innerHTML.length && spanChildren.length > 1) {
+  const sliceIdx = wasSpaceLast(activeLastSpan) ? 6 : 1;
+  activeLastSpan.innerHTML = activeLastSpan.innerHTML.slice(0, len - sliceIdx);
+  if (!!!activeLastSpan.innerHTML.length && spanChildren.length > 1) {
     //row is still not empty after clearing
-    lastSpan.remove();
-    return getLastRowChild();
+    activeLastSpan.remove();
+    return activeLastSpan;
   }
   //still has space
-  return lastSpan;
+  return activeLastSpan;
 }
 function addText(event) {
-  const lastSpan = getLastRowChild();
-  // if (TextCursorState.spanTextElement && TextCursorState.spanCharIdx) {
-  //   const text = TextCursorState.spanTextElement.innerHTML;
-  //   lastSpan.innerHTML = `${text.substr(0, TextCursorState.spanCharIdx)}${
-  //     event.key
-  //   }${text.substr(TextCursorState.spanCharIdx)}`;
-  //   TextCursorState.spanCharIdx++;
-  //   return;
-  // }
+  const activeLastSpan = getLastRowChild();
   const row = getLineRow();
-  if (wasSpaceLast(lastSpan)) {
+  if (wasSpaceLast(activeLastSpan)) {
     //new text after space
     const s = E("span", {
       attributes: {
@@ -58,27 +50,32 @@ function addText(event) {
     });
     s.innerHTML = event.key;
     row.appendChild(s);
-    return row;
+    return s;
   }
   //continue typing
-  lastSpan.innerHTML += event.key;
+  const text = activeSpanElement.innerHTML;
+  activeSpanElement.innerHTML = `${text.substr(0, activeSpanSubstringIdx)}${
+    event.key
+  }${text.substr(activeSpanSubstringIdx)}`;
+  activeSpanSubstringIdx++;
+  return activeLastSpan;
 }
 function addNonBreakingSpace(event) {
   const row = getLineRow();
-  const lastSpan = getLastRowChild();
-  if (lastSpan.innerHTML.includes("&nbsp;")) {
-    lastSpan.innerHTML += "&nbsp;";
-  } else {
-    const s = E("span", {
-      attributes: {
-        content: !!1,
-        index: getSpanChildren().length,
-      },
-    });
-    s.innerHTML = "&nbsp";
-    row.appendChild(s);
-    return s;
+  const activeLastSpan = getLastRowChild();
+  if (activeLastSpan.innerHTML.includes("&nbsp;")) {
+    activeLastSpan.innerHTML += "&nbsp;";
+    return activeLastSpan;
   }
+  const s = E("span", {
+    attributes: {
+      content: !!1,
+      index: getSpanChildren().length,
+    },
+  });
+  s.innerHTML = "&nbsp";
+  row.appendChild(s);
+  return s;
 }
 
 //PENDINGdassad

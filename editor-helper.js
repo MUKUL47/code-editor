@@ -21,7 +21,7 @@ function getLineRow(idx) {
 function addNewLine() {
   const e = newRow(++activeRowIndex);
   IDE.appendChild(e);
-  addNewTextSpan();
+  activeSpanElement = addNewTextSpan();
   return e;
 }
 function addNewTextSpan() {
@@ -43,16 +43,17 @@ function getLastRowChild(idx) {
 function updateOrAddNewLine() {
   if (activeRowIndex === IDE.children.length - 1) {
     addNewLine();
-  } else {
-    // update rest of the columns
-    for (let i = Number(activeRowIndex) + 1; i < IDE.children.length; i++) {
-      IDE.children[i].style.top = `${(i + 1) * 15}px`;
-      IDE.children[i].setAttribute("row-index", i + 1);
-    }
-
-    getLineRow().insertAdjacentElement("afterend", newRow(++activeRowIndex));
-    addNewTextSpan();
+    return getLastRowChild();
   }
+  // update rest of the columns
+  for (let i = Number(activeRowIndex) + 1; i < IDE.children.length; i++) {
+    IDE.children[i].style.top = `${(i + 1) * 15}px`;
+    IDE.children[i].setAttribute("row-index", i + 1);
+  }
+
+  getLineRow().insertAdjacentElement("afterend", newRow(++activeRowIndex));
+  addNewTextSpan();
+  return getLastRowChild();
 }
 function generateTextCursor() {
   document.getElementById("text-pipe")?.remove();

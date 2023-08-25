@@ -14,7 +14,7 @@ function addTextCursor(e) {
     const currentRow = getSpanChildren();
     const lengthUptoLast = currentRow[spanIdx > 0 ? spanIdx - 1 : 0];
     //
-    activeSpanSubstring = range.startOffset;
+    activeSpanSubstringIdx = range.startOffset;
     //
     const s = E("span", {
       style: {

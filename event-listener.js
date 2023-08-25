@@ -9,17 +9,18 @@ window.addEventListener("keydown", (event) => {
   const keyCode = event.keyCode || event.which;
   switch (!!1) {
     case ["space", "tab"].includes(code):
-      addNonBreakingSpace(event);
+      activeSpanElement = addNonBreakingSpace(event);
       break;
     case keyCode >= 32 && keyCode <= 126:
-      addText(event);
+      activeSpanElement = addText(event);
       break;
     case code === "backspace":
-      onBackspace(event);
+      activeSpanElement = onBackspace(event);
       break;
     case code === "enter":
-      updateOrAddNewLine();
+      activeSpanElement = updateOrAddNewLine();
       break;
   }
+  console.log(activeSpanElement);
   updateTextCursor();
 });

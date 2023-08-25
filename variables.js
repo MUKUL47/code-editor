@@ -4,4 +4,4 @@ const IDE_DOMRECT = IDE.getBoundingClientRect();
 let activeSpanElement = null;
 let activeRowIndex = -1;
 let finalRowIndex = -1;
-let activeSpanSubstring = 0;
+let activeSpanSubstringIdx = 0;
