@@ -53,26 +53,7 @@ function updateOrAddNewLine() {
     getLineRow().insertAdjacentElement("afterend", newRow(++activeRowIndex));
     addNewTextSpan();
   }
-  updateTypeSpanCommands.newLine();
 }
-const updateTypeSpanCommands = {
-  newLine: () => {
-    activeTypeSpanIdx = 0;
-    activeTypeSpanIdy += 1;
-  },
-  newSpan: () => {
-    activeTypeSpanIdx += 1;
-  },
-  backspace: () => {
-    activeTypeSpanIdx =
-      activeTypeSpanIdx > 0 ? activeTypeSpanIdx - 1 : activeTypeSpanIdx;
-  },
-  backspaceAndClear: () => {
-    activeTypeSpanIdx = 0;
-    activeTypeSpanIdy =
-      activeTypeSpanIdy > 0 ? activeTypeSpanIdy - 1 : activeTypeSpanIdy;
-  },
-};
 function generateTextCursor() {
   document.getElementById("text-pipe")?.remove();
   const e = E("div", {

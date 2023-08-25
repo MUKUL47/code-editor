@@ -1,10 +1,12 @@
 function updateActiveRowIdx(e) {
+  const parentE = e.srcElement.parentElement;
+  const target = e.target;
   activeRowIndex =
-    e.srcElement.parentElement.hasAttribute("row-index") ||
-    e.target.hasAttribute("row-index")
-      ? e.srcElement.parentElement.getAttribute("row-index") ||
-        e.target.getAttribute("row-index")
-      : activeRowIndex;
+    parentE.getAttribute("row-index") ||
+    target.getAttribute("row-index") ||
+    activeRowIndex;
+  activeRowIndex = Number(activeRowIndex);
+  activeSpanElement = parentE.hasAttribute("content") ? parentE : target;
 }
 function onBackspace(event) {
   const lastSpan = getLastRowChild();
@@ -23,14 +25,12 @@ function onBackspace(event) {
       IDE.children[i].setAttribute("row-index", i);
     }
     activeRowIndex--;
-    updateTypeSpanCommands.backspaceAndClear();
     return getLastRowChild();
   }
   const sliceIdx = wasSpaceLast(lastSpan) ? 6 : 1;
   lastSpan.innerHTML = lastSpan.innerHTML.slice(0, len - sliceIdx);
   if (!!!lastSpan.innerHTML.length && spanChildren.length > 1) {
     //row is still not empty after clearing
-    updateTypeSpanCommands.backspace();
     lastSpan.remove();
     return getLastRowChild();
   }
@@ -50,7 +50,6 @@ function addText(event) {
   const row = getLineRow();
   if (wasSpaceLast(lastSpan)) {
     //new text after space
-    updateTypeSpanCommands.newSpan();
     const s = E("span", {
       attributes: {
         index: getSpanChildren().length,
@@ -78,7 +77,6 @@ function addNonBreakingSpace(event) {
     });
     s.innerHTML = "&nbsp";
     row.appendChild(s);
-    updateTypeSpanCommands.newSpan();
     return s;
   }
 }

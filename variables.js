@@ -1,19 +1,7 @@
-let activeRowIndex = -1;
-let finalRowIndex = -1;
 const IDE = window["ide"];
 const TEXT_CURSOR = window["TEXT_CURSOR"];
-//
 const IDE_DOMRECT = IDE.getBoundingClientRect();
-
-//TYPE
-let activeTypeSpanIdx = 0;
-let activeTypeSpanIdy = 0;
-0;
-//TYPE
-
-//TEXT CURSOR
-const TextCursorState = {
-  spanTextElement: null,
-  spanCharIdx: 0,
-};
-//
+let activeSpanElement = null;
+let activeRowIndex = -1;
+let finalRowIndex = -1;
+let activeSpanSubstring = 0;
