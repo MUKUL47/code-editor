@@ -21,7 +21,6 @@ function getLineRow(idx) {
 function addNewLine() {
   const e = newRow(++activeRowIndex);
   IDE.appendChild(e);
-  finalRowIndex = activeRowIndex;
   addNewTextSpan();
   return e;
 }

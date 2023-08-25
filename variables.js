@@ -10,3 +10,10 @@ let activeTypeSpanIdx = 0;
 let activeTypeSpanIdy = 0;
 0;
 //TYPE
+
+//TEXT CURSOR
+const TextCursorState = {
+  spanTextElement: null,
+  spanCharIdx: 0,
+};
+//

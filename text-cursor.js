@@ -1,31 +1,48 @@
-document.addEventListener("click", (e) => {
-  return;
-  let range;
-  let textNode;
-  let offset;
-  if (!e.srcElement.hasAttribute("content")) return;
-  range = document.caretRangeFromPoint(e.clientX, e.clientY);
-  textNode = range.startContainer;
-  offset = range.startOffset;
-  if (!textNode) return;
-  const firstHalf = textNode.data.slice(0, range.startOffset);
-  const textSpanEle = e.srcElement;
-  const spanIdx = textSpanEle.getAttribute("index");
-  const currentRow = getLineRow();
-  const lengthUptoLast = currentRow.children[spanIdx > 0 ? spanIdx - 1 : 0];
-  const s = span();
-  s.innerHTML = firstHalf;
-  if (spanIdx == 0) {
-    getLineRow().append(s);
+function addTextCursor(e) {
+  try {
+    let range;
+    let textNode;
+    let offset;
+    if (!e.srcElement.hasAttribute("content")) return;
+    range = document.caretRangeFromPoint(e.clientX, e.clientY);
+    if (!range) return;
+    textNode = range.startContainer;
+    offset = range.startOffset;
+    const firstHalf = textNode.data.slice(0, range.startOffset);
+    const textSpanEle = e.srcElement;
+    const spanIdx = textSpanEle.getAttribute("index");
+    const currentRow = getSpanChildren();
+    const lengthUptoLast = currentRow[spanIdx > 0 ? spanIdx - 1 : 0];
+    //
+    TextCursorState.spanTextElement = textSpanEle;
+    TextCursorState.spanCharIdx = range.startOffset;
+    //
+    const s = E("span", {
+      style: {
+        opacity: 0,
+        position: "absolute",
+        left: "0px",
+      },
+    });
+    s.innerHTML = firstHalf;
+    let bounds;
+    IDE.append(s);
+    bounds = s.getBoundingClientRect();
     finalLeftCoord =
-      s.getBoundingClientRect().right - s.getBoundingClientRect().left;
-  } else {
-    lengthUptoLast.insertAdjacentElement("afterend", s);
-    finalLeftCoord = s.offsetLeft + s.offsetWidth;
+      spanIdx != 0
+        ? lengthUptoLast.getBoundingClientRect().right + bounds.width
+        : bounds.right;
+    s.remove();
+    updateTextCursor({ left: finalLeftCoord });
+  } catch (e) {
+    console.log("cursor-", e);
   }
-  s.remove();
-  updateTextCursor({ left: finalLeftCoord });
-});
-function updateTextCursor() {
-  getLineRow().appendChild(generateTextCursor());
+}
+function updateTextCursor(customCoords) {
+  const { left } = customCoords || {};
+  const spanTextElement = getLastRowChild();
+  TEXT_CURSOR.style.top = `${activeRowIndex * 15}px`;
+  TEXT_CURSOR.style.left = customCoords
+    ? left + "px"
+    : spanTextElement.getBoundingClientRect().right + "px";
 }

@@ -26,7 +26,6 @@
       height: 15px;
       width: 100%;
       position: absolute;
-      letter-spacing: -0.5px;
       border-bottom: 1px solid #8842;
       background-color: #88888839; /* Background color with alpha (rgba) */
     }
@@ -35,24 +34,25 @@
       animation: blink 1s infinite;
       color: #000;
       font-weight: bold;
-      height: 15px;
+      height: 17px;
       position: absolute;
       padding: 0px 0.35px;
       background: #000;
     }
 
-    /* @keyframes blink {
+    @keyframes blink {
       0%,
       100% {
-        opacity: 0;
+        opacity: 0.5;
       }
       50% {
         opacity: 1;
       }
-    } */
+    }
   </style>
   <body>
     <div id="ide"></div>
+    <div class="text-pipe" id="TEXT_CURSOR"></div>
   </body>
   <script src="./variables.js"></script>
   <script src="./common.js"></script>

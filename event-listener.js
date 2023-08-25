@@ -2,6 +2,7 @@ addNewLine();
 IDE.addEventListener("click", (e) => {
   updateActiveRowIdx(e);
   updateTextCursor();
+  addTextCursor(e);
 });
 window.addEventListener("keydown", (event) => {
   const code = event.code.toLowerCase(); //Alt Space

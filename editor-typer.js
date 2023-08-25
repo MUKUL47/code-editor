@@ -7,13 +7,11 @@ function updateActiveRowIdx(e) {
       : activeRowIndex;
 }
 function onBackspace(event) {
-  const row = getLineRow();
   const lastSpan = getLastRowChild();
   const len = lastSpan.innerHTML.length;
   const spanChildren = getSpanChildren();
   if (
     //row is empty move to previous row
-    // 2 -> extra span for cursor
     spanChildren.length === 1 &&
     !!!lastSpan.innerHTML.length &&
     activeRowIndex > 0
@@ -40,8 +38,16 @@ function onBackspace(event) {
   return lastSpan;
 }
 function addText(event) {
-  const row = getLineRow();
   const lastSpan = getLastRowChild();
+  // if (TextCursorState.spanTextElement && TextCursorState.spanCharIdx) {
+  //   const text = TextCursorState.spanTextElement.innerHTML;
+  //   lastSpan.innerHTML = `${text.substr(0, TextCursorState.spanCharIdx)}${
+  //     event.key
+  //   }${text.substr(TextCursorState.spanCharIdx)}`;
+  //   TextCursorState.spanCharIdx++;
+  //   return;
+  // }
+  const row = getLineRow();
   if (wasSpaceLast(lastSpan)) {
     //new text after space
     updateTypeSpanCommands.newSpan();
