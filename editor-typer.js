@@ -4,7 +4,7 @@ function updateActiveRowIdx(e) {
     e.target.hasAttribute("row-index")
       ? e.srcElement.parentElement.getAttribute("row-index") ||
         e.target.getAttribute("row-index")
-      : finalRowIndex;
+      : activeRowIndex;
 }
 function onBackspace(event) {
   const row = getLineRow();
@@ -18,6 +18,12 @@ function onBackspace(event) {
     !!!lastSpan.innerHTML.length &&
     activeRowIndex > 0
   ) {
+    getLineRow(activeRowIndex).remove();
+    for (let i = Number(activeRowIndex); i < IDE.children.length; i++) {
+      // update y coordinate of rest of span
+      IDE.children[i].style.top = `${i * 15}px`;
+      IDE.children[i].setAttribute("row-index", i);
+    }
     activeRowIndex--;
     updateTypeSpanCommands.backspaceAndClear();
     return getLastRowChild();

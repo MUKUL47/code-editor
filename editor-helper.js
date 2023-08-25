@@ -16,8 +16,7 @@ function getSpanChildren(idx) {
 }
 function getLineRow(idx) {
   //IDE -> ROW[ACTIVE]
-  const children = IDE.children[idx == undefined ? activeRowIndex : idx];
-  return children;
+  return IDE.children[idx == undefined ? activeRowIndex : idx];
 }
 function addNewLine() {
   const e = newRow(++activeRowIndex);
@@ -43,10 +42,17 @@ function getLastRowChild(idx) {
 }
 
 function updateOrAddNewLine() {
-  if (activeRowIndex === finalRowIndex) {
+  if (activeRowIndex === IDE.children.length - 1) {
     addNewLine();
   } else {
-    activeRowIndex++;
+    // update rest of the columns
+    for (let i = Number(activeRowIndex) + 1; i < IDE.children.length; i++) {
+      IDE.children[i].style.top = `${(i + 1) * 15}px`;
+      IDE.children[i].setAttribute("row-index", i + 1);
+    }
+
+    getLineRow().insertAdjacentElement("afterend", newRow(++activeRowIndex));
+    addNewTextSpan();
   }
   updateTypeSpanCommands.newLine();
 }
