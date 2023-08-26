@@ -21,6 +21,6 @@ window.addEventListener("keydown", (event) => {
       activeSpanElement = updateOrAddNewLine();
       break;
   }
-  console.log(activeSpanElement);
+  console.log(activeSpanSubstringIdx);
   updateTextCursor();
 });
