@@ -22,3 +22,12 @@ function E(e, properties = {}) {
 function wasSpaceLast(e) {
   return e.innerHTML?.slice(e?.innerHTML.length - 6) === "&nbsp;";
 }
+function createNewSpan(data) {
+  const e = E("span", {
+    attributes: {
+      content: !!1,
+    },
+  });
+  e.innerHTML = data ?? "";
+  return e;
+}

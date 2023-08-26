@@ -10,11 +10,12 @@ function addTextCursor(e) {
     offset = range.startOffset;
     const firstHalf = textNode.data.slice(0, range.startOffset);
     const textSpanEle = e.srcElement;
-    const spanIdx = textSpanEle.getAttribute("index");
+    const spanIdx = getSpanIndex(textSpanEle);
     const currentRow = getSpanChildren();
     const lengthUptoLast = currentRow[spanIdx > 0 ? spanIdx - 1 : 0];
     //
     activeSpanSubstringIdx = range.startOffset;
+    console.log(activeSpanSubstringIdx);
     //
     const s = E("span", {
       style: {

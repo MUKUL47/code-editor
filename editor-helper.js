@@ -25,12 +25,7 @@ function addNewLine() {
   return e;
 }
 function addNewTextSpan() {
-  const s = E("span", {
-    attributes: {
-      content: !!1,
-      index: 0,
-    },
-  });
+  const s = createNewSpan();
   getLineRow()?.appendChild(s);
   return s;
 }
@@ -63,4 +58,7 @@ function generateTextCursor() {
   });
   e.textContent = "|";
   return e;
+}
+function getSpanIndex(span, rowIndex) {
+  return [...getSpanChildren(rowIndex)].findIndex((s) => s === span);
 }

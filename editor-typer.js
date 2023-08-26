@@ -1,15 +1,19 @@
 function updateActiveRowIdx(e) {
   const parentE = e.srcElement.parentElement;
   const target = e.target;
-  activeRowIndex =
-    parentE.getAttribute("row-index") ||
-    target.getAttribute("row-index") ||
-    activeRowIndex;
-  activeRowIndex = Number(activeRowIndex);
-  activeSpanElement = parentE.hasAttribute("content") ? parentE : target;
+  activeSpanElement = parentE.hasAttribute("content")
+    ? parentE
+    : target.hasAttribute("content")
+    ? target
+    : target === IDE
+    ? IDE.children[IDE.children.length - 1].children[
+        IDE.children[IDE.children.length - 1].children.length - 1
+      ]
+    : target.children[target.children.length - 1];
+  activeRowIndex = getSpanIndex(activeSpanElement);
 }
 function onBackspace(event) {
-  const activeLastSpan = getLastRowChild();
+  const activeLastSpan = activeSpanElement || getLastRowChild();
   const len = activeLastSpan.innerHTML.length;
   const spanChildren = getSpanChildren();
   if (
@@ -38,17 +42,12 @@ function onBackspace(event) {
   return activeLastSpan;
 }
 function addText(event) {
-  const activeLastSpan = getLastRowChild();
+  const activeLastSpan = activeSpanElement;
   const row = getLineRow();
   if (wasSpaceLast(activeLastSpan)) {
     //new text after space
-    const s = E("span", {
-      attributes: {
-        index: getSpanChildren().length,
-        content: !!1,
-      },
-    });
-    s.innerHTML = event.key;
+    const s = createNewSpan(event.key);
+    activeSpanSubstringIdx = 1;
     row.appendChild(s);
     return s;
   }
@@ -62,33 +61,82 @@ function addText(event) {
 }
 function addNonBreakingSpace(event) {
   const row = getLineRow();
-  const activeLastSpan = getLastRowChild();
-  if (activeLastSpan.innerHTML.includes("&nbsp;")) {
-    activeLastSpan.innerHTML += "&nbsp;";
+  const activeLastSpan = activeSpanElement;
+  const hasSpace = activeLastSpan.innerHTML.includes("&nbsp;");
+  //already has space
+  const ceilIndex = activeSpanSubstringIdx * 6;
+  if (hasSpace && ceilIndex > -1) {
+    //calculate substring space chunk first assign it to innerHTML
+    // &nbsp[&NBPS]...
+    activeLastSpan.innerHTML =
+      activeLastSpan.innerHTML.substr(0, ceilIndex) +
+      "&nbsp" +
+      activeLastSpan.innerHTML.substr(ceilIndex);
+    activeSpanSubstringIdx += 6; // "&nbsp|"
     return activeLastSpan;
   }
-  const s = E("span", {
-    attributes: {
-      content: !!1,
-      index: getSpanChildren().length,
-    },
-  });
-  s.innerHTML = "&nbsp";
+  const isCursorEnd =
+    activeLastSpan.innerHTML.length === activeSpanSubstringIdx;
+  //check if adding space at the end of the line
+  // if (isCursorEnd && !hasSpace) {
+  //   //check if next span is a space -> then append that span instead
+  //   const idx = Number(activeLastSpan.getAttribute("index"));
+  //   if (idx > -1) {
+  //     const children = getSpanChildren();
+  //     if (children[idx + 1]?.innerHTML.includes("&nbsp")) {
+  //       activeSpanSubstringIdx = 0;
+  //       activeSpanElement = children[idx + 1];
+  //       return addNonBreakingSpace(event);
+  //     }
+  //   }
+  // }
+  // //add space btw 2 characters
+  // //split by substringIdx assign individual span for each char and append a nbsp
+  // else if (!isCursorEnd) {
+  //   const firstHalf = createNewSpan(
+  //     activeLastSpan.innerHTML.substr(0, activeSpanSubstringIdx)
+  //   );
+  //   const secondHalf = createNewSpan(
+  //     activeLastSpan.innerHTML.substr(activeSpanSubstringIdx)
+  //   );
+  //   const newSpace = createNewSpan("&nbsp");
+  //   const index = getSpanIndex(activeLastSpan);
+  //   const row = getLineRow();
+  //   activeLastSpan.remove();
+  //   if (index === 0) {
+  //     row.innerHTML =
+  //       firstHalf.outerHTML +
+  //       newSpace.outerHTML +
+  //       secondHalf.outerHTML +
+  //       [...row.children].map((v) => v.outerHTML).join("");
+  //   } else {
+  //     const previousSpan = row.children[index - 1];
+  //     previousSpan.insertAdjacentElement("afterend", secondHalf);
+  //     previousSpan.insertAdjacentElement("afterend", newSpace);
+  //     previousSpan.insertAdjacentElement("afterend", firstHalf);
+  //   }
+  //   activeSpanElement = newSpace;
+  //   activeSpanSubstringIdx = 1;
+  //   return activeSpanElement;
+  // }
+  //next span doesnt exist this is for brand new space
+  const s = createNewSpan("&nbsp");
+  activeSpanSubstringIdx = 6; // "&nbsp|"
   row.appendChild(s);
   return s;
 }
 
 //PENDINGdassad
-function checkIfLastSpanOverflow() {
-  const span = getLastRowChild();
-  const spanDomRect = span.getBoundingClientRect();
-  if (IDE_DOMRECT.right < spanDomRect.right) {
-    if (!wasSpaceLast(span)) {
-      const content = span.innerHTML;
-      span.remove();
-      updateOrAddNewLine();
-      const newSpan = getLastRowChild();
-      newSpan.innerHTML = content;
-    }
-  }
-}
+// function checkIfLastSpanOverflow() {
+//   const span = activeSpanElement || getLastRowChild();
+//   const spanDomRect = span.getBoundingClientRect();
+//   if (IDE_DOMRECT.right < spanDomRect.right) {
+//     if (!wasSpaceLast(span)) {
+//       const content = span.innerHTML;
+//       span.remove();
+//       updateOrAddNewLine();
+//       const newSpan = activeSpanElement || getLastRowChild();
+//       newSpan.innerHTML = content;
+//     }
+//   }
+// }
