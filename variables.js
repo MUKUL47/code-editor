@@ -5,3 +5,4 @@ let activeSpanElement = null;
 let activeRowIndex = -1;
 let finalRowIndex = -1;
 let activeSpanSubstringIdx = 0;
+let activeSubstringIdx = 0;
