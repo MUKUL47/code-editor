@@ -59,4 +59,7 @@ function constructRowSpans(row, newRowText) {
       )
     )
   );
+  if (row.innerHTML === "") {
+    row.append(createNewSpan(""));
+  }
 }
