@@ -8,18 +8,22 @@ document.addEventListener("click", () => {});
 window.addEventListener("keydown", (event) => {
   const code = event.code.toLowerCase(); //Alt Space
   const keyCode = event.keyCode || event.which;
+  const key = event.key;
   switch (!!1) {
     case ["space", "tab"].includes(code):
-      activeSpanElement = onSpace(event);
+      onSpaceTab(event);
+      break;
+    case key.includes("Arrow"):
+      onArrowMovement(event);
       break;
     case keyCode >= 32 && keyCode <= 126:
-      activeSpanElement = onKeystroke(event);
+      onKeystroke(event);
       break;
     case code === "backspace":
-      activeSpanElement = onBackspace(event);
+      onBackspace(event);
       break;
     case code === "enter":
-      activeSpanElement = updateOrAddNewLine();
+      updateOrAddNewLine();
       break;
   }
   updateTextCursorOnEvent();

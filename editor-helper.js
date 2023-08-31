@@ -24,8 +24,8 @@ function addNewLine() {
   activeSpanElement = addNewTextSpan();
   return e;
 }
-function addNewTextSpan() {
-  const s = createNewSpan();
+function addNewTextSpan(data) {
+  const s = createNewSpan(data);
   getLineRow()?.appendChild(s);
   return s;
 }

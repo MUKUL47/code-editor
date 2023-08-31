@@ -18,18 +18,19 @@ function onKeystroke(e) {
   activeSpanSubstringIdx++;
 }
 
-function onSpace() {
+function onSpaceTab(e) {
+  e.preventDefault();
+  const isTab = e.key === "Tab";
   const row = getLineRow();
   const currentRowHTML = row.innerText;
-  const newRowText = `${currentRowHTML.slice(
-    0,
-    activeSpanSubstringIdx
-  )}${" "}${currentRowHTML.slice(activeSpanSubstringIdx)}`;
+  const newRowText = `${currentRowHTML.slice(0, activeSpanSubstringIdx)}${
+    isTab ? "   " : " "
+  }${currentRowHTML.slice(activeSpanSubstringIdx)}`;
   constructRowSpans(row, newRowText);
-  activeSpanSubstringIdx++;
+  activeSpanSubstringIdx += isTab ? 2 : 1;
 }
 
-function onBackspace() {
+function onBackspace(e) {
   const row = getLineRow();
   const currentRowHTML = row.innerText;
   if (activeSpanSubstringIdx === 0) return;
@@ -39,13 +40,17 @@ function onBackspace() {
   )}${currentRowHTML.slice(activeSpanSubstringIdx)}`;
   constructRowSpans(row, newRowText);
   activeSpanSubstringIdx--;
+  return;
 }
 
 function updateOrAddNewLine() {
-  activeSpanSubstringIdx = 0;
   //adding line in the end
+  const slicedData = getSliceDataIFF();
+  activeSpanSubstringIdx = 0;
   if (activeRowIndex === IDE.children.length - 1) {
-    addNewLine();
+    activeSpanSubstringIdx = 0;
+    const row = addNewLine();
+    slicedData && constructRowSpans(row, slicedData);
     return getLastRowChild();
   }
   //adding in between
@@ -55,7 +60,48 @@ function updateOrAddNewLine() {
   }
   getLineRow().insertAdjacentElement("afterend", newRow(++activeRowIndex));
   addNewTextSpan();
+  slicedData && constructRowSpans(getLineRow(), slicedData);
   return getLastRowChild();
 }
 
-function updateNewLineWithSliceData() {}
+function getSliceDataIFF() {
+  const row = getLineRow();
+  const currentRowHTML = row.innerText;
+  if (!activeSpanSubstringIdx) {
+    constructRowSpans(row, "");
+    return currentRowHTML;
+  }
+  constructRowSpans(row, currentRowHTML.slice(0, activeSpanSubstringIdx));
+  return currentRowHTML.slice(activeSpanSubstringIdx);
+}
+
+function onArrowMovement(event) {
+  event.preventDefault();
+  const direction = event.key.toLowerCase().replace("arrow", "");
+  let row = ["right", "left"].includes(direction)
+    ? getLineRow().innerText
+    : null;
+  switch (direction) {
+    case "up":
+      activeRowIndex = !activeRowIndex ? activeRowIndex : activeRowIndex - 1;
+      break;
+    case "down":
+      activeRowIndex =
+        activeRowIndex >= IDE.children.length - 1
+          ? activeRowIndex
+          : activeRowIndex + 1;
+      break;
+    case "right":
+      activeSpanSubstringIdx =
+        activeSpanSubstringIdx >= row.length
+          ? activeSpanSubstringIdx
+          : activeSpanSubstringIdx + 1;
+      break;
+    case "left":
+      activeSpanSubstringIdx =
+        activeSpanSubstringIdx === 0
+          ? activeSpanSubstringIdx
+          : activeSpanSubstringIdx - 1;
+      break;
+  }
+}
