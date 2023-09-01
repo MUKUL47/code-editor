@@ -51,12 +51,23 @@ function onBackspace(e) {
     row.remove();
     return;
   }
-  const newRowText = `${currentRowHTML.slice(
-    0,
-    activeSpanSubstringIdx - 1
-  )}${currentRowHTML.slice(activeSpanSubstringIdx)}`;
+  let sliceIndex = 1;
+  let newRowText = "";
+  if (e.ctrlKey) {
+    const [activeSpan, _, activeSpanSlicedIdx] = getSpanWithSubstrIndex(
+      getSpanChildren()
+    );
+    activeSpan.innerText = activeSpan.innerText.slice(activeSpanSlicedIdx);
+    newRowText = row.innerText;
+    activeSpanSubstringIdx -= activeSpanSlicedIdx;
+  } else {
+    newRowText = `${currentRowHTML.slice(
+      0,
+      activeSpanSubstringIdx - sliceIndex
+    )}${currentRowHTML.slice(activeSpanSubstringIdx)}`;
+    activeSpanSubstringIdx -= sliceIndex;
+  }
   constructRowSpans(row, newRowText);
-  activeSpanSubstringIdx--;
   return;
 }
 

@@ -48,7 +48,8 @@ function getSpanIndex(span, rowIndex) {
   return [...getSpanChildren(rowIndex)].findIndex((s) => s === span);
 }
 function constructRowSpans(row, newRowText) {
-  const spans = newRowText.split(/(\S+|\s+)/g).filter(String);
+  //DO NOT USE REGEX TRAVERSAL STRING NORMALLY
+  const spans = newRowText.split(/(\s+|\.|\(|\))/).filter(String);
   row.innerHTML = "";
   spans.forEach((split) =>
     row.append(
