@@ -4,8 +4,8 @@ IDE.addEventListener("click", (e) => {
   updateTextCursor();
   addTextCursor(e);
 });
-document.addEventListener("click", () => {});
 window.addEventListener("keydown", (event) => {
+  removePreviousSelection();
   const code = event.code.toLowerCase(); //Alt Space
   const keyCode = event.keyCode || event.which;
   const key = event.key;

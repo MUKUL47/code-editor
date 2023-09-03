@@ -7,7 +7,6 @@ function addTextCursor(e) {
     if (!e.srcElement.hasAttribute("content")) return;
     range = document.caretRangeFromPoint(e.clientX, e.clientY);
     if (!range) return;
-    console.log(range);
     textNode = range.startContainer;
     offset = range.startOffset;
     const firstHalf = textNode.data.slice(0, range.startOffset);

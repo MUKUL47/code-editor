@@ -47,9 +47,19 @@ function generateTextCursor() {
 function getSpanIndex(span, rowIndex) {
   return [...getSpanChildren(rowIndex)].findIndex((s) => s === span);
 }
+
+function getTextSplits(text) {
+  return text.split(/(\s+|\.|\(|\))/).filter(String);
+}
+
+function appendSpansToRow(row, spans) {
+  [...row.children].forEach((span) => span.remove());
+  spans.forEach((span) => row.append(span));
+}
+
 function constructRowSpans(row, newRowText) {
   //DO NOT USE REGEX TRAVERSAL STRING NORMALLY
-  const spans = newRowText.split(/(\s+|\.|\(|\))/).filter(String);
+  const spans = getTextSplits(newRowText);
   row.innerHTML = "";
   spans.forEach((split) =>
     row.append(
@@ -63,4 +73,15 @@ function constructRowSpans(row, newRowText) {
   if (row.innerHTML === "") {
     row.append(createNewSpan(""));
   }
+}
+
+function removePreviousSelection(from) {
+  const e = IDE.getElementsByClassName("text-selection");
+  for (let i = 0; i < e.length; i++) {
+    e[i].classList.remove("text-selection");
+  }
+}
+
+function reconstructRow(row) {
+  constructRowSpans(row, row.innerText);
 }

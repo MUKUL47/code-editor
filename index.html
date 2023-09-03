@@ -6,11 +6,15 @@
     <title>Document</title>
   </head>
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@300&display=swap");
+  </style>
+  <style>
     body {
       margin: 0;
       background: #888;
     }
     #ide {
+      font-family: "Inconsolata", monospace;
       display: flex;
       flex-direction: row;
       width: 500px;
@@ -18,6 +22,7 @@
       border: 1px solid #8884;
       cursor: text;
       position: relative;
+      user-select: none;
     }
     #ide:hover {
       cursor: text;
@@ -53,10 +58,14 @@
         opacity: 1;
       }
     }
+    .text-selection {
+      background-color: #ccffce52;
+    }
   </style>
   <body>
     <div id="ide"></div>
     <div class="text-pipe" id="TEXT_CURSOR"></div>
+    <text-selection></text-selection>
   </body>
   <script src="./variables.js"></script>
   <script src="./common.js"></script>
@@ -66,4 +75,5 @@
   <script src="./event-listener.js"></script>
   <script src="./editor-typer.js"></script>
   <script src="./text-cursor.js"></script>
+  <script src="./text-selection.js"></script>
 </html>

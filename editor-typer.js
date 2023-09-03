@@ -58,16 +58,16 @@ function onBackspace(e) {
       getSpanChildren()
     );
     activeSpan.innerText = activeSpan.innerText.slice(activeSpanSlicedIdx);
+    sliceIndex = activeSpanSlicedIdx;
     newRowText = row.innerText;
-    activeSpanSubstringIdx -= activeSpanSlicedIdx;
   } else {
     newRowText = `${currentRowHTML.slice(
       0,
       activeSpanSubstringIdx - sliceIndex
     )}${currentRowHTML.slice(activeSpanSubstringIdx)}`;
-    activeSpanSubstringIdx -= sliceIndex;
   }
   constructRowSpans(row, newRowText);
+  activeSpanSubstringIdx -= sliceIndex;
   return;
 }
 
