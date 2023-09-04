@@ -43,13 +43,13 @@ function addTextCursor(e) {
 function updateTextCursor(customCoords) {
   const { left } = customCoords || {};
   const spanTextElement = getLastRowChild();
-  TEXT_CURSOR.style.top = `${activeRowIndex * 15}px`;
+  TEXT_CURSOR.style.top = `${activeRowIndex * ROW_HEIGHT}px`;
   TEXT_CURSOR.style.left = customCoords
     ? left + "px"
     : spanTextElement.getBoundingClientRect().right + "px";
 }
 function updateTextCursorOnEvent() {
-  TEXT_CURSOR.style.top = `${activeRowIndex * 15}px`;
+  TEXT_CURSOR.style.top = `${activeRowIndex * ROW_HEIGHT}px`;
   const s = E("span", {
     style: {
       opacity: 0,

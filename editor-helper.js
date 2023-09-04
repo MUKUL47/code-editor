@@ -1,7 +1,7 @@
 function newRow(n) {
   return E("div", {
     style: {
-      top: `${n * 15}px`,
+      top: `${n * ROW_HEIGHT}px`,
     },
     attributes: {
       "row-index": n,
@@ -57,20 +57,26 @@ function appendSpansToRow(row, spans) {
   spans.forEach((span) => row.append(span));
 }
 
+let rowsData = new Map();
 function constructRowSpans(row, newRowText) {
   //DO NOT USE REGEX TRAVERSAL STRING NORMALLY
   const spans = getTextSplits(newRowText);
   row.innerHTML = "";
-  spans.forEach((split) =>
-    row.append(
-      createNewSpan(
-        split.includes(" ")
-          ? Array(split.length).fill("&nbsp;").join("")
-          : split
-      )
-    )
-  );
-  if (row.innerHTML === "") {
+  let previousDataCount = 0;
+  rowsData.set(activeRowIndex, {});
+  for (let i = 0; i < spans.length; i++) {
+    const split = spans[i];
+    const data = split.includes(" ")
+      ? Array(split.length).fill("&nbsp;").join("")
+      : split;
+    const e = createNewSpan(data);
+    e.setAttribute("i", i);
+    e.setAttribute("len", split.length);
+    e.setAttribute("prevLength", previousDataCount);
+    previousDataCount += split.length;
+    row.append(e);
+  }
+  if (row.children.length === 0) {
     row.append(createNewSpan(""));
   }
 }

@@ -41,7 +41,7 @@ function onBackspace(e) {
     if (activeRowIndex === 0) return;
     // delete this row update remaining below and concat current row text with previous one
     for (let i = Number(activeRowIndex + 1); i < IDE.children.length; i++) {
-      IDE.children[i].style.top = `${(i - 1) * 15}px`;
+      IDE.children[i].style.top = `${(i - 1) * ROW_HEIGHT}px`;
       IDE.children[i].setAttribute("row-index", i - 1);
     }
     activeRowIndex--;
@@ -83,7 +83,7 @@ function updateOrAddNewLine() {
   }
   //adding in between
   for (let i = Number(activeRowIndex) + 1; i < IDE.children.length; i++) {
-    IDE.children[i].style.top = `${(i + 1) * 15}px`;
+    IDE.children[i].style.top = `${(i + 1) * ROW_HEIGHT}px`;
     IDE.children[i].setAttribute("row-index", i + 1);
   }
   getLineRow().insertAdjacentElement("afterend", newRow(++activeRowIndex));
