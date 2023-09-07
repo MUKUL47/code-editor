@@ -8,7 +8,6 @@ let mouseUp = true;
 
 document.addEventListener("mousedown", (e) => {
   removePreviousSelection();
-  reconstructRow(getLineRow());
   ideMouseDownX = e.clientX;
   ideMouseDownY = e.clientY;
   mouseUp = false;
@@ -16,7 +15,6 @@ document.addEventListener("mousedown", (e) => {
 document.addEventListener("mousemove", (e) => {
   if (!!mouseUp) return;
   removePreviousSelection();
-  reconstructRow(getLineRow());
   onMouseSelection(e);
 });
 document.addEventListener("mouseup", (e) => {
@@ -33,12 +31,12 @@ function onMouseSelection(e) {
   ) {
     return;
   }
-  console.log(ideMouseDownY);
   //slice the text in 3 parts calculate spans for all three and append
   //text-selection class to 2nd one rebuild the row
   //WIP calculate selected text from different span this only works for single span at the moment
   const sourceRowIdx = Math.floor(ideMouseDownY / ROW_HEIGHT);
   const targetRowIdx = Math.floor(ideMouseUpY / ROW_HEIGHT);
+  if (!IDE.children[sourceRowIdx]) return;
   const startE = document.caretRangeFromPoint(
     ideMouseDownX,
     Math.ceil(ideMouseDownY / ROW_HEIGHT) * ROW_HEIGHT
@@ -47,70 +45,64 @@ function onMouseSelection(e) {
     ideMouseUpX,
     Math.ceil(ideMouseUpY / ROW_HEIGHT) * ROW_HEIGHT
   );
-  const startParentE = startE.commonAncestorContainer.parentElement;
-  const endParentE = endE.commonAncestorContainer.parentElement;
   if (sourceRowIdx != targetRowIdx) {
     if (sourceRowIdx < targetRowIdx) {
       //down
-      const firstRow = getLineRow(sourceRowIdx);
-      const firstRowOffet =
-        Number(startParentE.getAttribute("prevLength")) + startE.startOffset;
-      const s1 = createNewSpan(
-        firstRow.innerText.slice(firstRowOffet).replaceAll(" ", "&nbsp;")
+      createSelection(
+        sourceRowIdx,
+        startE,
+        getLastRowChild(sourceRowIdx).getBoundingClientRect().right
       );
-      s1.className = "text-selection";
-      appendSpansToRow(firstRow, [
-        ...getTextSplits(firstRow.innerText.slice(0, firstRowOffet)).map((s) =>
-          createNewSpan(s)
-        ),
-        s1,
-      ]);
-      //   for (let i = sourceRowIdx + 1; i < targetRowIdx; i++) {
-      //     const r = getLineRow(i);
-      //     const s = createNewSpan(r.innerText.replaceAll(" ", "&nbsp;"));
-      //     s.className = "text-selection";
-      //     r.innerHTML = s.innerHTML;
-      //   }
-      //////////////////////
-      const secondRow = getLineRow(targetRowIdx);
-      const lastRowOffset =
-        Number(endParentE.getAttribute("prevLength")) + endE.startOffset;
-      const s2 = createNewSpan(
-        secondRow.innerText.slice(0, lastRowOffset).replaceAll(" ", "&nbsp;")
-      );
-      s2.className = "text-selection";
-      appendSpansToRow(secondRow, [
-        s2,
-        ...getTextSplits(secondRow.innerText.slice(lastRowOffset)).map((s) =>
-          createNewSpan(s)
-        ),
-      ]);
-      ////////////////////////
+      for (let i = sourceRowIdx + 1; i < targetRowIdx; i++) {
+        createSelection(i, 0, getLastRowChild(i).getBoundingClientRect().right);
+      }
+      createSelection(targetRowIdx, 0, endE);
     } else {
       //up
+      createSelection(sourceRowIdx, 0, startE);
+      for (let i = sourceRowIdx - 1; i > targetRowIdx; i--) {
+        createSelection(i, 0, getLastRowChild(i).getBoundingClientRect().right);
+      }
+      createSelection(
+        targetRowIdx,
+        endE,
+        getLastRowChild(targetRowIdx).getBoundingClientRect().right
+      );
     }
-    return;
+  } else {
+    createSelection(sourceRowIdx, startE, endE);
   }
-  const start =
-    Number(startParentE.getAttribute("prevLength")) + startE.startOffset;
-  const end = Number(endParentE.getAttribute("prevLength")) + endE.startOffset;
-  const [i, j] = start > end ? [end, start] : [start, end];
-  if (i != j) applySelection(getLineRow(), i, j);
+  //optimize cursor on event fn before proceeding
+  activeRowIndex = targetRowIdx;
+  activeSpanSubstringIdx =
+    endE.startOffset +
+    +endE.commonAncestorContainer.parentElement.getAttribute("prevLength");
+  //   updateTextCursorOnEvent();
 }
 
-function applySelection(row, i, j) {
-  const rowText = row.innerText;
-  const [firstHalfSpan, selectionTextSpan, secondHalfSpan] = [
-    getTextSplits(rowText.slice(0, i)),
-    rowText.slice(i, j),
-    getTextSplits(rowText.slice(j)),
-  ];
-  const span = createNewSpan(selectionTextSpan.replaceAll(" ", "&nbsp;"));
-  span.className = "text-selection";
-  console.log(selectionTextSpan.replaceAll(" ", "&nbsp;"));
-  appendSpansToRow(row, [
-    ...firstHalfSpan.map((s) => createNewSpan(s)),
-    span,
-    ...secondHalfSpan.map((s) => createNewSpan(s)),
-  ]);
+function createSelection(yAxis, startEle, endEle) {
+  const startPosition = calculateELastPosition(startEle);
+  const endPosition = calculateELastPosition(endEle);
+  const s = createNewSpan();
+  s.style.position = "absolute";
+  s.className = "text-selection";
+  s.style.left = `${Math.min(endPosition, startPosition)}px`;
+  s.style.width = `${
+    startPosition > endPosition
+      ? startPosition - endPosition
+      : endPosition - startPosition
+  }px`;
+  s.style.height = `${ROW_HEIGHT}px`;
+  s.style.top = `${yAxis * ROW_HEIGHT}px`;
+  TEXT_SELECTION.appendChild(s);
+}
+function calculateELastPosition(e) {
+  if (typeof e === "number") return e;
+  const element = e.commonAncestorContainer.parentElement;
+  const eSliceIdx = e.startOffset;
+  const newSpan = createNewSpan(element.innerText.slice(0, eSliceIdx));
+  element.insertAdjacentElement("beforebegin", newSpan);
+  const position = element.getBoundingClientRect().left;
+  newSpan.remove();
+  return position;
 }

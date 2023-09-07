@@ -48,6 +48,12 @@
       padding: 0px 0.35px;
       background: #000;
     }
+    .text-selection:hover {
+      cursor: text;
+    }
+    .text-selection {
+      z-index: -1;
+    }
 
     @keyframes blink {
       0%,
@@ -65,7 +71,7 @@
   <body>
     <div id="ide"></div>
     <div class="text-pipe" id="TEXT_CURSOR"></div>
-    <text-selection></text-selection>
+    <div id="TEXT_SELECTION"></div>
   </body>
   <script src="./variables.js"></script>
   <script src="./common.js"></script>

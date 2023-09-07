@@ -1,4 +1,3 @@
-const ROW_HEIGHT = 15;
 const IDE = window["ide"];
 const TEXT_CURSOR = window["TEXT_CURSOR"];
 const IDE_DOMRECT = IDE.getBoundingClientRect();
@@ -7,3 +6,4 @@ let activeRowIndex = -1;
 let finalRowIndex = -1;
 let activeSpanSubstringIdx = 0;
 //
+const ROW_HEIGHT = 15;
