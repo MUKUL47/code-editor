@@ -1,8 +1,10 @@
 addNewLine();
 IDE.addEventListener("click", (e) => {
   updateActiveRowIdx(e);
-  updateTextCursor();
+  // updateTextCursor();
+  // addTextCursor(e);
   addTextCursor(e);
+  updateActiveRowIdx(e);
 });
 window.addEventListener("keydown", (event) => {
   removePreviousSelection();

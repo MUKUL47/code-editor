@@ -5,6 +5,7 @@ let ideMouseDownY = -1;
 let ideMouseUpX = -1;
 let ideMouseUpY = -1;
 let mouseUp = true;
+let lastYAxisMovement = -1;
 
 document.addEventListener("mousedown", (e) => {
   ideMouseDownX = e.clientX;
@@ -13,11 +14,11 @@ document.addEventListener("mousedown", (e) => {
 });
 document.addEventListener("mousemove", (e) => {
   if (!!mouseUp) return;
+  addTextCursor(e);
   onMouseSelection(e);
 });
 document.addEventListener("mouseup", (e) => {
   mouseUp = true;
-  //   addTextCursor(e);
 });
 
 function onMouseSelection(e) {
@@ -30,7 +31,6 @@ function onMouseSelection(e) {
   ) {
     return;
   }
-  removePreviousSelection();
   const sourceRowIdx = Math.floor(ideMouseDownY / ROW_HEIGHT);
   let targetRowIdx = Math.floor(ideMouseUpY / ROW_HEIGHT);
   targetRowIdx =
@@ -43,40 +43,75 @@ function onMouseSelection(e) {
     ideMouseUpX,
     Math.ceil(ideMouseUpY / ROW_HEIGHT) * ROW_HEIGHT
   );
-  let position = {};
+  // removePreviousSelection();
+  activeRowIndex = ideMouseUpY <= 15 ? 0 : Math.floor(ideMouseUpY / ROW_HEIGHT); //* ROW_HEIGHT;
+  let selectionSpans = [];
   if (sourceRowIdx != targetRowIdx) {
     if (sourceRowIdx < targetRowIdx) {
       //down
-      createSelection(
-        sourceRowIdx,
-        startE,
-        getLastRowChild(sourceRowIdx).getBoundingClientRect().right
+      selectionSpans.push(
+        createSelection(
+          sourceRowIdx,
+          startE,
+          getLastRowChild(sourceRowIdx).getBoundingClientRect().right
+        )
       );
       for (let i = sourceRowIdx + 1; i < targetRowIdx; i++) {
-        createSelection(i, 0, getLastRowChild(i).getBoundingClientRect().right);
+        selectionSpans.push(
+          createSelection(
+            i,
+            0,
+            getLastRowChild(i).getBoundingClientRect().right
+          )
+        );
       }
-      position = createSelection(targetRowIdx, 0, endE);
+      selectionSpans.push(createSelection(targetRowIdx, 0, endE));
     } else {
       //up
-      position = createSelection(sourceRowIdx, 0, startE);
+      selectionSpans.push(createSelection(sourceRowIdx, 0, startE));
       for (let i = sourceRowIdx - 1; i > targetRowIdx; i--) {
-        createSelection(i, 0, getLastRowChild(i).getBoundingClientRect().right);
+        selectionSpans.push(
+          createSelection(
+            i,
+            0,
+            getLastRowChild(i).getBoundingClientRect().right
+          )
+        );
       }
-      createSelection(
-        targetRowIdx,
-        endE,
-        getLastRowChild(targetRowIdx).getBoundingClientRect().right
+      selectionSpans.push(
+        createSelection(
+          targetRowIdx,
+          endE,
+          getLastRowChild(targetRowIdx).getBoundingClientRect().right
+        )
       );
     }
   } else {
-    position = createSelection(sourceRowIdx, startE, endE);
+    let s = createSelection(sourceRowIdx, startE, endE, true);
+    s && selectionSpans.push(s);
+    if (s) {
+      TEXT_SELECTION.innerHTML = "";
+    }
   }
+  const len = +`${selectionSpans.length}`;
+  selectionSpans = selectionSpans.filter(Boolean);
+  if (
+    sourceRowIdx != targetRowIdx &&
+    len !== selectionSpans.length &&
+    targetRowIdx === lastYAxisMovement
+  ) {
+    selectionSpans = [];
+  } else {
+    TEXT_SELECTION.innerHTML = "";
+  }
+  lastYAxisMovement = targetRowIdx;
+  appendSelections(selectionSpans);
 }
 
 function createSelection(yAxis, startEle, endEle) {
   const startPosition = calculateELastPosition(yAxis, startEle);
   const endPosition = calculateELastPosition(yAxis, endEle);
-  if (!endPosition) return;
+  if (!endPosition) return null;
   const s = createNewSpan();
   s.style.position = "absolute";
   s.className = "text-selection";
@@ -88,8 +123,7 @@ function createSelection(yAxis, startEle, endEle) {
   }px`;
   s.style.height = `${ROW_HEIGHT}px`;
   s.style.top = `${yAxis * ROW_HEIGHT}px`;
-  TEXT_SELECTION.appendChild(s);
-  return { endPosition, startPosition };
+  return s;
 }
 function calculateELastPosition(rowId, e) {
   if (typeof e === "number") return e;
@@ -98,4 +132,7 @@ function calculateELastPosition(rowId, e) {
     e.commonAncestorContainer.parentElement,
     e.startOffset
   );
+}
+function appendSelections(spans) {
+  TEXT_SELECTION.append(...spans.filter(Boolean));
 }

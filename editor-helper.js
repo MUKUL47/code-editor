@@ -83,11 +83,6 @@ function constructRowSpans(row, newRowText) {
 
 function removePreviousSelection(from) {
   TEXT_SELECTION.innerHTML = "";
-  return;
-  const e = IDE.getElementsByClassName("text-selection");
-  for (let i = 0; i < e.length; i++) {
-    e[i].classList.remove("text-selection");
-  }
 }
 
 function reconstructRow(row) {

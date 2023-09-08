@@ -7,7 +7,7 @@ function updateActiveRowIdx(e) {
     : Number(target.getAttribute("row-index"));
   activeRowIndex = newRowId;
   if (parentE.hasAttribute("row-index") || target.hasAttribute("row-index")) {
-    activeSpanSubstringIdx = getLineRow().innerText.length;
+    // activeSpanSubstringIdx = getLineRow().innerText.length;
   }
 }
 
