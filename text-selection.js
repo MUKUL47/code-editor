@@ -6,18 +6,22 @@ let ideMouseUpX = -1;
 let ideMouseUpY = -1;
 let mouseUp = true;
 let lastYAxisMovement = -1;
-
-document.addEventListener("mousedown", (e) => {
+let mouseDownTime = 0;
+let mouseUpTime = 0;
+IDE.addEventListener("mousedown", (e) => {
+  mouseDownTime = Date.now();
   ideMouseDownX = e.clientX;
   ideMouseDownY = e.clientY;
   mouseUp = false;
 });
-document.addEventListener("mousemove", (e) => {
+IDE.addEventListener("mousemove", (e) => {
   if (!!mouseUp) return;
   addTextCursor(e);
   onMouseSelection(e);
 });
-document.addEventListener("mouseup", (e) => {
+IDE.addEventListener("mouseup", (e) => {
+  addTextCursor(e);
+  updateActiveRowIdx(e);
   mouseUp = true;
 });
 
@@ -43,8 +47,6 @@ function onMouseSelection(e) {
     ideMouseUpX,
     Math.ceil(ideMouseUpY / ROW_HEIGHT) * ROW_HEIGHT
   );
-  // removePreviousSelection();
-  activeRowIndex = ideMouseUpY <= 15 ? 0 : Math.floor(ideMouseUpY / ROW_HEIGHT); //* ROW_HEIGHT;
   let selectionSpans = [];
   if (sourceRowIdx != targetRowIdx) {
     if (sourceRowIdx < targetRowIdx) {
@@ -101,9 +103,11 @@ function onMouseSelection(e) {
     targetRowIdx === lastYAxisMovement
   ) {
     selectionSpans = [];
+  } else if (sourceRowIdx != targetRowIdx) {
+    TEXT_SELECTION.innerHTML = "";
   }
   lastYAxisMovement = targetRowIdx;
-  TEXT_SELECTION.append(...spans.filter(Boolean));
+  TEXT_SELECTION.append(...selectionSpans);
 }
 
 function createSelection(yAxis, startEle, endEle) {
