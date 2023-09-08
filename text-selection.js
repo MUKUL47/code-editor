@@ -93,7 +93,7 @@ function onMouseSelection(e) {
       TEXT_SELECTION.innerHTML = "";
     }
   }
-  const len = +`${selectionSpans.length}`;
+  const len = selectionSpans.length;
   selectionSpans = selectionSpans.filter(Boolean);
   if (
     sourceRowIdx != targetRowIdx &&
@@ -101,11 +101,9 @@ function onMouseSelection(e) {
     targetRowIdx === lastYAxisMovement
   ) {
     selectionSpans = [];
-  } else {
-    TEXT_SELECTION.innerHTML = "";
   }
   lastYAxisMovement = targetRowIdx;
-  appendSelections(selectionSpans);
+  TEXT_SELECTION.append(...spans.filter(Boolean));
 }
 
 function createSelection(yAxis, startEle, endEle) {
@@ -132,7 +130,4 @@ function calculateELastPosition(rowId, e) {
     e.commonAncestorContainer.parentElement,
     e.startOffset
   );
-}
-function appendSelections(spans) {
-  TEXT_SELECTION.append(...spans.filter(Boolean));
 }
