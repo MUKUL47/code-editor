@@ -1,53 +1,36 @@
 function addTextCursor(e) {
-  //on documnet
   try {
-    let range;
-    let textNode;
-    let offset;
     if (!e.srcElement.hasAttribute("content")) return;
-    range = document.caretRangeFromPoint(e.clientX, e.clientY);
-    if (!range) return;
-    textNode = range.startContainer;
-    offset = range.startOffset;
-    const firstHalf = textNode.data.slice(0, range.startOffset);
-    const textSpanEle = e.srcElement;
-    const spanIdx = getSpanIndex(textSpanEle);
-    const currentRow = getSpanChildren();
-    const lengthUptoLast = currentRow[spanIdx > 0 ? spanIdx - 1 : 0];
-    //
-    activeSpanSubstringIdx = calculateSubstringIndex(spanIdx, range); // range.startOffset;
-    activeSpanElement = range.startContainer.parentNode;
+    const caretRange = document.caretRangeFromPoint(e.clientX, e.clientY);
+    if (!caretRange) return;
+    activeSpanSubstringIdx = getSubstringSliceIndex(
+      caretRange.startContainer.parentElement,
+      caretRange.startOffset
+    );
+    activeSpanElement = caretRange.startContainer.parentElement;
     activeSpanIndex = getSpanIndex(activeSpanElement);
-    //
-    const s = E("span", {
-      style: {
-        opacity: 0,
-        position: "absolute",
-        left: "0px",
-      },
+    updateTextCursor({
+      left: getTextWidth(
+        activeRowIndex,
+        activeSpanElement,
+        caretRange.startOffset
+      ),
     });
-    s.innerHTML = firstHalf;
-    let bounds;
-    IDE.append(s);
-    bounds = s.getBoundingClientRect();
-    finalLeftCoord =
-      spanIdx != 0
-        ? lengthUptoLast.getBoundingClientRect().right + bounds.width
-        : bounds.right;
-    s.remove();
-    updateTextCursor({ left: finalLeftCoord });
   } catch (e) {
-    console.log("cursor-", e);
+    console.log(e);
   }
 }
 function updateTextCursor(customCoords) {
-  const { left } = customCoords || {};
-  const spanTextElement = getLastRowChild();
-  TEXT_CURSOR.style.top = `${activeRowIndex * ROW_HEIGHT}px`;
-  TEXT_CURSOR.style.left = customCoords
-    ? left + "px"
-    : spanTextElement.getBoundingClientRect().right + "px";
+  const { left, top } = customCoords || {};
+  TEXT_CURSOR.style.top = `${
+    (top != undefined ? top : activeRowIndex) * ROW_HEIGHT
+  }px`;
+  TEXT_CURSOR.style.left =
+    left != undefined
+      ? left + "px"
+      : getLastRowChild().getBoundingClientRect().right + "px";
 }
+
 function updateTextCursorOnEvent() {
   TEXT_CURSOR.style.top = `${activeRowIndex * ROW_HEIGHT}px`;
   const s = E("span", {
@@ -68,15 +51,6 @@ function updateTextCursorOnEvent() {
       : 0;
   TEXT_CURSOR.style.left = `${s.getBoundingClientRect().width + existingLen}px`;
   s.remove();
-}
-function calculateSubstringIndex(index, range) {
-  const currentRow = getSpanChildren();
-  if (!index) return range.startOffset;
-  let c = 0;
-  for (let i = 0; i < index; i++) {
-    c += currentRow[i].innerText.length;
-  }
-  return range.startOffset + c;
 }
 function getSpanWithSubstrIndex(currentRow) {
   const len = currentRow.length;

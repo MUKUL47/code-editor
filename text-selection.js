@@ -7,18 +7,17 @@ let ideMouseUpY = -1;
 let mouseUp = true;
 
 document.addEventListener("mousedown", (e) => {
-  removePreviousSelection();
   ideMouseDownX = e.clientX;
   ideMouseDownY = e.clientY;
   mouseUp = false;
 });
 document.addEventListener("mousemove", (e) => {
   if (!!mouseUp) return;
-  removePreviousSelection();
   onMouseSelection(e);
 });
 document.addEventListener("mouseup", (e) => {
   mouseUp = true;
+  //   addTextCursor(e);
 });
 
 function onMouseSelection(e) {
@@ -31,12 +30,11 @@ function onMouseSelection(e) {
   ) {
     return;
   }
-  //slice the text in 3 parts calculate spans for all three and append
-  //text-selection class to 2nd one rebuild the row
-  //WIP calculate selected text from different span this only works for single span at the moment
+  removePreviousSelection();
   const sourceRowIdx = Math.floor(ideMouseDownY / ROW_HEIGHT);
-  const targetRowIdx = Math.floor(ideMouseUpY / ROW_HEIGHT);
-  if (!IDE.children[sourceRowIdx]) return;
+  let targetRowIdx = Math.floor(ideMouseUpY / ROW_HEIGHT);
+  targetRowIdx =
+    targetRowIdx - 1 === IDE.children.length ? targetRowIdx - 1 : targetRowIdx;
   const startE = document.caretRangeFromPoint(
     ideMouseDownX,
     Math.ceil(ideMouseDownY / ROW_HEIGHT) * ROW_HEIGHT
@@ -45,6 +43,7 @@ function onMouseSelection(e) {
     ideMouseUpX,
     Math.ceil(ideMouseUpY / ROW_HEIGHT) * ROW_HEIGHT
   );
+  let position = {};
   if (sourceRowIdx != targetRowIdx) {
     if (sourceRowIdx < targetRowIdx) {
       //down
@@ -56,10 +55,10 @@ function onMouseSelection(e) {
       for (let i = sourceRowIdx + 1; i < targetRowIdx; i++) {
         createSelection(i, 0, getLastRowChild(i).getBoundingClientRect().right);
       }
-      createSelection(targetRowIdx, 0, endE);
+      position = createSelection(targetRowIdx, 0, endE);
     } else {
       //up
-      createSelection(sourceRowIdx, 0, startE);
+      position = createSelection(sourceRowIdx, 0, startE);
       for (let i = sourceRowIdx - 1; i > targetRowIdx; i--) {
         createSelection(i, 0, getLastRowChild(i).getBoundingClientRect().right);
       }
@@ -70,19 +69,14 @@ function onMouseSelection(e) {
       );
     }
   } else {
-    createSelection(sourceRowIdx, startE, endE);
+    position = createSelection(sourceRowIdx, startE, endE);
   }
-  //optimize cursor on event fn before proceeding
-  activeRowIndex = targetRowIdx;
-  activeSpanSubstringIdx =
-    endE.startOffset +
-    +endE.commonAncestorContainer.parentElement.getAttribute("prevLength");
-  //   updateTextCursorOnEvent();
 }
 
 function createSelection(yAxis, startEle, endEle) {
-  const startPosition = calculateELastPosition(startEle);
-  const endPosition = calculateELastPosition(endEle);
+  const startPosition = calculateELastPosition(yAxis, startEle);
+  const endPosition = calculateELastPosition(yAxis, endEle);
+  if (!endPosition) return;
   const s = createNewSpan();
   s.style.position = "absolute";
   s.className = "text-selection";
@@ -95,14 +89,13 @@ function createSelection(yAxis, startEle, endEle) {
   s.style.height = `${ROW_HEIGHT}px`;
   s.style.top = `${yAxis * ROW_HEIGHT}px`;
   TEXT_SELECTION.appendChild(s);
+  return { endPosition, startPosition };
 }
-function calculateELastPosition(e) {
+function calculateELastPosition(rowId, e) {
   if (typeof e === "number") return e;
-  const element = e.commonAncestorContainer.parentElement;
-  const eSliceIdx = e.startOffset;
-  const newSpan = createNewSpan(element.innerText.slice(0, eSliceIdx));
-  element.insertAdjacentElement("beforebegin", newSpan);
-  const position = element.getBoundingClientRect().left;
-  newSpan.remove();
-  return position;
+  return getTextWidth(
+    rowId,
+    e.commonAncestorContainer.parentElement,
+    e.startOffset
+  );
 }
