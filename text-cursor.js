@@ -23,15 +23,17 @@ function addTextCursor(e) {
   }
 }
 function updateCursorOutsideVicinity(event) {
-  const isLeftBounds = IDE.offsetLeft >= event.clientX;
+  if (IDE.offsetLeft >= event.clientX) {
+    activeSpanSubstringIdx = 0;
+    updateTextCursor({
+      left: 0,
+    });
+    return;
+  }
   const e = getLastRowChild(activeRowIndex);
-  activeSpanSubstringIdx = isLeftBounds
-    ? 0
-    : getSubstringSliceIndex(e, e.innerText.length);
+  activeSpanSubstringIdx = getSubstringSliceIndex(e, e.innerText.length);
   updateTextCursor({
-    left: isLeftBounds
-      ? 0
-      : getTextWidth(activeRowIndex, e, e.innerText.length),
+    left: getTextWidth(activeRowIndex, e, e.innerText.length),
   });
 }
 function updateTextCursor(customCoords) {
@@ -65,16 +67,4 @@ function updateTextCursorOnEvent() {
       : 0;
   TEXT_CURSOR.style.left = `${s.getBoundingClientRect().width + existingLen}px`;
   s.remove();
-}
-function getSpanWithSubstrIndex(currentRow) {
-  const len = currentRow.length;
-  let s = "";
-  for (let i = 0; i < currentRow.length; i++) {
-    const remaining = activeSpanSubstringIdx - s.length;
-    const inner = currentRow[i].innerText;
-    s += inner;
-    if (s.length >= activeSpanSubstringIdx)
-      return [currentRow[i], i, remaining];
-  }
-  return [currentRow[len - 1], len - 1, s.length - activeSpanSubstringIdx];
 }

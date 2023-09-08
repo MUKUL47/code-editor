@@ -19,9 +19,6 @@ function E(e, properties = {}) {
   ele.className = properties.class || "";
   return ele;
 }
-function wasSpaceLast(e) {
-  return e.innerHTML?.slice(e?.innerHTML.length - 6) === "&nbsp;";
-}
 function createNewSpan(data) {
   const e = E("span", {
     attributes: {

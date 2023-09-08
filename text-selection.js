@@ -1,30 +1,22 @@
 //selection using mouse
 
-let ideMouseDownX = -1;
-let ideMouseDownY = -1;
-let ideMouseUpX = -1;
-let ideMouseUpY = -1;
-let mouseUp = true;
-let lastYAxisMovement = -1;
-let mouseDownTime = 0;
-let mouseUpTime = 0;
-IDE.addEventListener("mousedown", (e) => {
+function onMouseDown(e) {
   mouseDownTime = Date.now();
   ideMouseDownX = e.clientX;
   ideMouseDownY = e.clientY;
   mouseUp = false;
-});
-IDE.addEventListener("mousemove", (e) => {
+}
+
+function onMouseMove(e) {
   if (!!mouseUp) return;
   addTextCursor(e);
   onMouseSelection(e);
-});
-IDE.addEventListener("mouseup", (e) => {
+}
+function onMouseUp(e) {
   addTextCursor(e);
   updateActiveRowIdx(e);
   mouseUp = true;
-});
-
+}
 function onMouseSelection(e) {
   ideMouseUpX = e.clientX;
   ideMouseUpY = e.clientY;

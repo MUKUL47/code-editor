@@ -7,3 +7,10 @@ let finalRowIndex = -1;
 let activeSpanSubstringIdx = 0;
 //
 const ROW_HEIGHT = 15;
+
+let ideMouseDownX = -1;
+let ideMouseDownY = -1;
+let ideMouseUpX = -1;
+let ideMouseUpY = -1;
+let mouseUp = true;
+let lastYAxisMovement = -1;
