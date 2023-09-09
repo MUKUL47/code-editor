@@ -1,7 +1,7 @@
 const main = () => {
   addNewLine();
   window.addEventListener("keydown", (event) => {
-    removePreviousSelection();
+    removePreviousTextSelection();
     const code = event.code.toLowerCase(); //Alt Space
     const keyCode = event.keyCode || event.which;
     const key = event.key;

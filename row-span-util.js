@@ -1,5 +1,14 @@
+/**
+ * calculate row substring using prevLength + current element offset value;
+ * create new span with new substring and append in IDE;
+ * post DOM addition calculate boundingRect.width, remove element
+ * @param {number} rowIndex
+ * @param {HTMLElement} span
+ * @param {number} offset active span substring index
+ * @returns {number} right most coordinate of the active caret
+ */
 function getTextWidth(rowIndex, span, offset) {
-  const row = getLineRow(rowIndex);
+  const row = getRowById(rowIndex);
   if (!row) return 0;
   const text = row.innerText.slice(0, getSubstringSliceIndex(span, offset));
   const s = createNewSpan(text);
@@ -9,13 +18,29 @@ function getTextWidth(rowIndex, span, offset) {
   s.remove();
   return right;
 }
+/**
+ * prevLength attribute in span + custom offset
+ * @param {HTMLElement} span
+ * @param {number} offset
+ * @returns {number}
+ */
 function getSubstringSliceIndex(span, offset) {
   return +span.getAttribute("prevLength") + offset;
 }
+/**
+ *
+ * @param {HTMLElement} span
+ * @returns {number}
+ */
 function getSpanIndex(span) {
   return +span.getAttribute("i");
 }
 
+/**
+ * @todo this is one HEAVY fn optimize or find an alternative******************
+ * @param {HTMLElement} currentRow
+ * @returns {Array} [lastOffsetElement, length, remainingLength]
+ */
 function getSpanWithSubstrIndex(currentRow) {
   const len = currentRow.length;
   let s = "";

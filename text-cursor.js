@@ -1,10 +1,11 @@
 function addTextCursor(e) {
   try {
-    activeRowIndex = e.clientY <= 15 ? 0 : Math.floor(e.clientY / ROW_HEIGHT); //* ROW_HEIGHT;
+    activeRowIndex =
+      e.clientY <= ROW_HEIGHT ? 0 : Math.floor(e.clientY / ROW_HEIGHT); //* ROW_HEIGHT;
     if (!e.srcElement.hasAttribute("content")) {
       return updateCursorOutsideVicinity(e);
     }
-    const caretRange = document.caretRangeFromPoint(e.clientX, e.clientY);
+    const caretRange = getCarentPosition(e.clientX, e.clientY);
     if (!caretRange) return;
     activeSpanSubstringIdx = getSubstringSliceIndex(
       caretRange.startContainer.parentElement,

@@ -1,19 +1,18 @@
 function updateActiveRowIdx(e) {
   const parentE = e.srcElement.parentElement;
   const target = e.target;
-
   const newRowId = parentE.hasAttribute("row-index")
     ? Number(parentE.getAttribute("row-index"))
     : Number(target.getAttribute("row-index"));
   activeRowIndex = newRowId;
-  if (parentE.hasAttribute("row-index") || target.hasAttribute("row-index")) {
-    // activeSpanSubstringIdx = getLineRow().innerText.length;
-  }
+  // if (parentE.hasAttribute("row-index") || target.hasAttribute("row-index")) {
+  //   // activeSpanSubstringIdx = getRowById().innerText.length;
+  // }
 }
 
 function onKeystroke(e) {
   //e.key
-  const row = getLineRow();
+  const row = getRowById();
   const currentRowHTML = row.innerText;
   const newRowText = `${currentRowHTML.slice(0, activeSpanSubstringIdx)}${
     e.key
@@ -25,7 +24,7 @@ function onKeystroke(e) {
 function onSpaceTab(e) {
   e.preventDefault();
   const isTab = e.key === "Tab";
-  const row = getLineRow();
+  const row = getRowById();
   const currentRowHTML = row.innerText;
   const newRowText = `${currentRowHTML.slice(0, activeSpanSubstringIdx)}${
     isTab ? "   " : " "
@@ -35,7 +34,7 @@ function onSpaceTab(e) {
 }
 
 function onBackspace(e) {
-  const row = getLineRow();
+  const row = getRowById();
   const currentRowHTML = row.innerText;
   if (activeSpanSubstringIdx === 0) {
     if (activeRowIndex === 0) return;
@@ -45,7 +44,7 @@ function onBackspace(e) {
       IDE.children[i].setAttribute("row-index", i - 1);
     }
     activeRowIndex--;
-    const previousRow = getLineRow();
+    const previousRow = getRowById();
     activeSpanSubstringIdx = previousRow.innerText.length;
     constructRowSpans(previousRow, previousRow.innerText + currentRowHTML);
     row.remove();
@@ -86,14 +85,14 @@ function updateOrAddNewLine() {
     IDE.children[i].style.top = `${(i + 1) * ROW_HEIGHT}px`;
     IDE.children[i].setAttribute("row-index", i + 1);
   }
-  getLineRow().insertAdjacentElement("afterend", newRow(++activeRowIndex));
+  getRowById().insertAdjacentElement("afterend", newRow(++activeRowIndex));
   addNewTextSpan();
-  slicedData && constructRowSpans(getLineRow(), slicedData);
+  slicedData && constructRowSpans(getRowById(), slicedData);
   return getLastRowChild();
 }
 
 function getSliceDataIFF() {
-  const row = getLineRow();
+  const row = getRowById();
   const currentRowHTML = row.innerText;
   if (!activeSpanSubstringIdx) {
     constructRowSpans(row, "");
@@ -106,12 +105,12 @@ function getSliceDataIFF() {
 function onArrowMovement(event) {
   event.preventDefault();
   const direction = event.key.toLowerCase();
-  let row = getLineRow();
+  let row = getRowById();
   let current = row.innerText.length;
   const isNextRowAvailable = IDE.children[activeRowIndex + 1];
   if (direction === "arrowup") {
     if (activeRowIndex === 0) return;
-    const previous = getLineRow(activeRowIndex - 1).innerText.length;
+    const previous = getRowById(activeRowIndex - 1).innerText.length;
     activeRowIndex--;
     activeSpanSubstringIdx = Math.min(previous, activeSpanSubstringIdx);
     return;

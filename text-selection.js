@@ -31,11 +31,11 @@ function onMouseSelection(e) {
   let targetRowIdx = Math.floor(ideMouseUpY / ROW_HEIGHT);
   targetRowIdx =
     targetRowIdx - 1 === IDE.children.length ? targetRowIdx - 1 : targetRowIdx;
-  const startE = document.caretRangeFromPoint(
+  const startE = getCarentPosition(
     ideMouseDownX,
     Math.ceil(ideMouseDownY / ROW_HEIGHT) * ROW_HEIGHT
   );
-  const endE = document.caretRangeFromPoint(
+  const endE = getCarentPosition(
     ideMouseUpX,
     Math.ceil(ideMouseUpY / ROW_HEIGHT) * ROW_HEIGHT
   );
@@ -84,7 +84,7 @@ function onMouseSelection(e) {
     let s = createSelection(sourceRowIdx, startE, endE, true);
     s && selectionSpans.push(s);
     if (s) {
-      TEXT_SELECTION.innerHTML = "";
+      removePreviousTextSelection();
     }
   }
   const len = selectionSpans.length;
@@ -96,7 +96,7 @@ function onMouseSelection(e) {
   ) {
     selectionSpans = [];
   } else if (sourceRowIdx != targetRowIdx) {
-    TEXT_SELECTION.innerHTML = "";
+    removePreviousTextSelection();
   }
   lastYAxisMovement = targetRowIdx;
   TEXT_SELECTION.append(...selectionSpans);
