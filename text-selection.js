@@ -43,6 +43,7 @@ function onMouseSelection(e) {
   if (sourceRowIdx != targetRowIdx) {
     if (sourceRowIdx < targetRowIdx) {
       //down
+      textSelectionDirection = constants.TEXT_SELECTION_DIR.down;
       selectionSpans.push(
         createSelection(
           sourceRowIdx,
@@ -62,6 +63,7 @@ function onMouseSelection(e) {
       selectionSpans.push(createSelection(targetRowIdx, 0, endE));
     } else {
       //up
+      textSelectionDirection = constants.TEXT_SELECTION_DIR.up;
       selectionSpans.push(createSelection(sourceRowIdx, 0, startE));
       for (let i = sourceRowIdx - 1; i > targetRowIdx; i--) {
         selectionSpans.push(
@@ -81,6 +83,7 @@ function onMouseSelection(e) {
       );
     }
   } else {
+    textSelectionDirection = constants.TEXT_SELECTION_DIR.xAxis;
     let s = createSelection(sourceRowIdx, startE, endE, true);
     s && selectionSpans.push(s);
     if (s) {
@@ -103,12 +106,18 @@ function onMouseSelection(e) {
 }
 
 function createSelection(yAxis, startEle, endEle) {
-  const startPosition = calculateELastPosition(yAxis, startEle);
-  const endPosition = calculateELastPosition(yAxis, endEle);
+  const [startPosition, startSliceIdx] = calculateELastPosition(
+    yAxis,
+    startEle
+  );
+  const [endPosition, endSliceIdx] = calculateELastPosition(yAxis, endEle);
   if (!endPosition) return null;
   const s = createNewSpan();
   s.style.position = "absolute";
-  s.className = "text-selection";
+  s.className = constants.TEXT_SELECTION;
+  s.setAttribute(constants.START_SLICE_IDX, startSliceIdx);
+  s.setAttribute(constants.END_SLICE_IDX, endSliceIdx);
+  s.setAttribute(constants.ROW_INDEX, yAxis);
   s.style.left = `${Math.min(endPosition, startPosition)}px`;
   s.style.width = `${
     startPosition > endPosition
@@ -120,7 +129,10 @@ function createSelection(yAxis, startEle, endEle) {
   return s;
 }
 function calculateELastPosition(rowId, e) {
-  if (typeof e === "number") return e;
+  if (typeof e === "number") {
+    e = e.toFixed(1);
+    return [e, e];
+  }
   return getTextWidth(
     rowId,
     e.commonAncestorContainer.parentElement,

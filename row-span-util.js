@@ -9,14 +9,15 @@
  */
 function getTextWidth(rowIndex, span, offset) {
   const row = getRowById(rowIndex);
-  if (!row) return 0;
-  const text = row.innerText.slice(0, getSubstringSliceIndex(span, offset));
+  if (!row) return [0, 0];
+  const sliceIdx = getSubstringSliceIndex(span, offset);
+  const text = row.innerText.slice(0, sliceIdx);
   const s = createNewSpan(text);
   s.style.position = "absolute";
   IDE.append(s);
-  let right = s.getBoundingClientRect().width;
+  const right = s.getBoundingClientRect().width;
   s.remove();
-  return right;
+  return [right, sliceIdx];
 }
 /**
  * prevLength attribute in span + custom offset
@@ -52,4 +53,22 @@ function getSpanWithSubstrIndex(currentRow) {
       return [currentRow[i], i, remaining];
   }
   return [currentRow[len - 1], len - 1, s.length - activeSpanSubstringIdx];
+}
+/**
+ *
+ * @returns {HTMLCollection}
+ */
+function getTextSelections() {
+  return TEXT_SELECTION.children;
+}
+
+/**
+ * reoder rows
+ * @param {number} rowIndex
+ * @param {number} margin how many rows
+ */
+function reorderRowsIndexOnDelete(rowIndex = activeRowIndex, margin = 1) {
+  for (let i = Number(rowIndex + margin); i < IDE.children.length; i++) {
+    IDE.children[i].style.top = `${(i - margin) * ROW_HEIGHT}px`;
+  }
 }

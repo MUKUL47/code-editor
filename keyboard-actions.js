@@ -1,13 +1,10 @@
 function updateActiveRowIdx(e) {
   const parentE = e.srcElement.parentElement;
   const target = e.target;
-  const newRowId = parentE.hasAttribute("row-index")
-    ? Number(parentE.getAttribute("row-index"))
-    : Number(target.getAttribute("row-index"));
-  activeRowIndex = newRowId;
-  // if (parentE.hasAttribute("row-index") || target.hasAttribute("row-index")) {
-  //   // activeSpanSubstringIdx = getRowById().innerText.length;
-  // }
+  activeRowIndex = getRowIndex(
+    parentE.classList.contains(constants.CLASS_NEW_LINE) ? parentE : target
+  );
+  activeRowIndex = activeRowIndex === -1 ? 0 : activeRowIndex;
 }
 
 function onKeystroke(e) {
@@ -17,8 +14,32 @@ function onKeystroke(e) {
   const newRowText = `${currentRowHTML.slice(0, activeSpanSubstringIdx)}${
     e.key
   }${currentRowHTML.slice(activeSpanSubstringIdx)}`;
-  constructRowSpans(row, newRowText);
   activeSpanSubstringIdx++;
+  //handle selection accordingly
+  // const selections = getTextSelections();
+  // if (selections.length > 0) {
+  //   let removedCount = 0;
+  //   const partialSelections = [];
+  //   for (let selection of selections) {
+  //     const endSlice = selection.getAttribute(constants.END_SLICE_IDX);
+  //     const rowIndex = +selection.getAttribute(constants.ROW_INDEX);
+  //     if (endSlice == selection.style.width.replace("px", "")) {
+  //       reorderRowsIndexOnDelete(rowIndex);
+  //       getRowById(rowIndex).remove();
+  //       removedCount++;
+  //     }else{
+  //       partialSelections.push(selection)
+  //     }
+  //   }
+  //   if(partialSelections.length > 0){
+  //     //merge rows and concat the text;
+
+  //   }
+  //   if (textSelectionDirection === constants.TEXT_SELECTION_DIR.down) {
+  //     activeRowIndex -= removedCount;
+  //   }
+  // }
+  constructRowSpans(row, newRowText);
 }
 
 function onSpaceTab(e) {
@@ -39,15 +60,12 @@ function onBackspace(e) {
   if (activeSpanSubstringIdx === 0) {
     if (activeRowIndex === 0) return;
     // delete this row update remaining below and concat current row text with previous one
-    for (let i = Number(activeRowIndex + 1); i < IDE.children.length; i++) {
-      IDE.children[i].style.top = `${(i - 1) * ROW_HEIGHT}px`;
-      IDE.children[i].setAttribute("row-index", i - 1);
-    }
+    // reorderRowsIndexOnDelete();
     activeRowIndex--;
     const previousRow = getRowById();
     activeSpanSubstringIdx = previousRow.innerText.length;
     constructRowSpans(previousRow, previousRow.innerText + currentRowHTML);
-    row.remove();
+    removeRows([row]);
     return;
   }
   let sliceIndex = 1;
@@ -78,12 +96,12 @@ function updateOrAddNewLine() {
     activeSpanSubstringIdx = 0;
     const row = addNewLine();
     slicedData && constructRowSpans(row, slicedData);
+    activeRowIndex++;
     return getLastRowChild();
   }
   //adding in between
   for (let i = Number(activeRowIndex) + 1; i < IDE.children.length; i++) {
     IDE.children[i].style.top = `${(i + 1) * ROW_HEIGHT}px`;
-    IDE.children[i].setAttribute("row-index", i + 1);
   }
   getRowById().insertAdjacentElement("afterend", newRow(++activeRowIndex));
   addNewTextSpan();

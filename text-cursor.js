@@ -17,7 +17,7 @@ function addTextCursor(e) {
         activeRowIndex,
         activeSpanElement,
         caretRange.startOffset
-      ),
+      )[0],
     });
   } catch (e) {
     console.log(e);
@@ -34,7 +34,7 @@ function updateCursorOutsideVicinity(event) {
   const e = getLastRowChild(activeRowIndex);
   activeSpanSubstringIdx = getSubstringSliceIndex(e, e.innerText.length);
   updateTextCursor({
-    left: getTextWidth(activeRowIndex, e, e.innerText.length),
+    left: getTextWidth(activeRowIndex, e, e.innerText.length)[0],
   });
 }
 function updateTextCursor(customCoords) {
@@ -60,7 +60,7 @@ function updateTextCursorOnEvent() {
   const children = getSpanChildren();
   const [spanElement, activeSpanIndex, remaining] =
     getSpanWithSubstrIndex(children);
-  s.innerHTML = spanElement.innerText.substr(0, remaining);
+  s.innerHTML = spanElement?.innerText.substr(0, remaining) || "";
   IDE.append(s);
   const existingLen =
     activeSpanIndex > 0

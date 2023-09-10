@@ -14,3 +14,8 @@ let ideMouseUpX = -1;
 let ideMouseUpY = -1;
 let mouseUp = true;
 let lastYAxisMovement = -1;
+let textSelectionDirection = null;
+
+let newLineCounter = -1;
+
+let rowLineMap = new Map();

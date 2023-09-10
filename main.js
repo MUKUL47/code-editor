@@ -1,7 +1,6 @@
 const main = () => {
   addNewLine();
   window.addEventListener("keydown", (event) => {
-    removePreviousTextSelection();
     const code = event.code.toLowerCase(); //Alt Space
     const keyCode = event.keyCode || event.which;
     const key = event.key;
@@ -22,6 +21,7 @@ const main = () => {
         updateOrAddNewLine();
         break;
     }
+    removePreviousTextSelection();
     updateTextCursorOnEvent();
   });
   IDE.addEventListener("mousedown", (e) => onMouseDown(e));

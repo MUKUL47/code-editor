@@ -9,9 +9,9 @@ function newRow(n) {
       top: `${n * ROW_HEIGHT}px`,
     },
     attributes: {
-      "row-index": n,
+      [constants.ROW_INDEX]: n,
     },
-    class: "newline",
+    class: constants.CLASS_NEW_LINE,
   });
 }
 
@@ -39,7 +39,8 @@ function getRowById(index) {
  * @returns HTMLElement
  */
 function addNewLine() {
-  const e = newRow(++activeRowIndex);
+  const e = newRow(++newLineCounter);
+  rowLineMap.set(newLineCounter, e);
   IDE.appendChild(e);
   activeSpanElement = addNewTextSpan();
   return e;
@@ -108,4 +109,29 @@ function constructRowSpans(row, newRowText) {
  */
 function removePreviousTextSelection() {
   TEXT_SELECTION.innerHTML = "";
+}
+
+/**
+ * find row index
+ * @param {HTMLElement} row
+ * @returns {number}
+ */
+function getRowIndex(row) {
+  for (let i = 0; i < IDE.children.length; i++) {
+    if (IDE.children[i] === row) return i;
+  }
+  return -1;
+}
+
+/**
+ * removes row span
+ * @description Must always use this func to delete row
+ * @param { HTMLElement[]} span
+ */
+function removeRows(spans) {
+  for (const span of spans) {
+    const idx = span.getAttribute(constants.ROW_INDEX);
+    rowLineMap.delete(idx);
+    span.remove();
+  }
 }
