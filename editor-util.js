@@ -9,7 +9,7 @@ function newRow(n) {
       top: `${n * ROW_HEIGHT}px`,
     },
     attributes: {
-      [constants.ROW_INDEX]: n,
+      [constants.ROW_INDEX]: Math.random(),
     },
     class: constants.CLASS_NEW_LINE,
   });
@@ -36,11 +36,12 @@ function getRowById(index) {
 
 /**
  * appends a row
+ * @param {number} pointer height yAxis
  * @returns HTMLElement
  */
-function addNewLine() {
-  const e = newRow(++newLineCounter);
-  rowLineMap.set(newLineCounter, e);
+function addNewLine(pointer) {
+  const e = newRow(pointer != undefined ? pointer : ++newLineCounter);
+  // rowLineMap.set(newLineCounter, e);
   IDE.appendChild(e);
   activeSpanElement = addNewTextSpan();
   return e;
@@ -121,6 +122,19 @@ function getRowIndex(row) {
     if (IDE.children[i] === row) return i;
   }
   return -1;
+}
+
+/**
+ *
+ * @param {number} index
+ * @returns {HTMLElement}
+ */
+function getRowByIndex(index) {
+  for (let i = 0; i < IDE.children.length; i++) {
+    if (IDE.children[i].getAttribute(constants.ROW_INDEX) == index)
+      return [IDE.children[i], i];
+  }
+  return [null, -1];
 }
 
 /**

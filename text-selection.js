@@ -115,9 +115,17 @@ function createSelection(yAxis, startEle, endEle) {
   const s = createNewSpan();
   s.style.position = "absolute";
   s.className = constants.TEXT_SELECTION;
-  s.setAttribute(constants.START_SLICE_IDX, startSliceIdx);
-  s.setAttribute(constants.END_SLICE_IDX, endSliceIdx);
-  s.setAttribute(constants.ROW_INDEX, yAxis);
+  const [s1, s2] =
+    startSliceIdx < endSliceIdx
+      ? [startSliceIdx, endSliceIdx]
+      : [endSliceIdx, startSliceIdx];
+  s.setAttribute(constants.START_SLICE_IDX, s1);
+  s.setAttribute(constants.END_SLICE_IDX, s2);
+  s.setAttribute(constants.ROW_ORIGINAL_INDEX, yAxis);
+  s.setAttribute(
+    constants.ROW_INDEX,
+    IDE.children[yAxis].getAttribute(constants.ROW_INDEX)
+  );
   s.style.left = `${Math.min(endPosition, startPosition)}px`;
   s.style.width = `${
     startPosition > endPosition

@@ -7,41 +7,6 @@ function updateActiveRowIdx(e) {
   activeRowIndex = activeRowIndex === -1 ? 0 : activeRowIndex;
 }
 
-function onKeystroke(e) {
-  //e.key
-  const row = getRowById();
-  const currentRowHTML = row.innerText;
-  const newRowText = `${currentRowHTML.slice(0, activeSpanSubstringIdx)}${
-    e.key
-  }${currentRowHTML.slice(activeSpanSubstringIdx)}`;
-  activeSpanSubstringIdx++;
-  //handle selection accordingly
-  // const selections = getTextSelections();
-  // if (selections.length > 0) {
-  //   let removedCount = 0;
-  //   const partialSelections = [];
-  //   for (let selection of selections) {
-  //     const endSlice = selection.getAttribute(constants.END_SLICE_IDX);
-  //     const rowIndex = +selection.getAttribute(constants.ROW_INDEX);
-  //     if (endSlice == selection.style.width.replace("px", "")) {
-  //       reorderRowsIndexOnDelete(rowIndex);
-  //       getRowById(rowIndex).remove();
-  //       removedCount++;
-  //     }else{
-  //       partialSelections.push(selection)
-  //     }
-  //   }
-  //   if(partialSelections.length > 0){
-  //     //merge rows and concat the text;
-
-  //   }
-  //   if (textSelectionDirection === constants.TEXT_SELECTION_DIR.down) {
-  //     activeRowIndex -= removedCount;
-  //   }
-  // }
-  constructRowSpans(row, newRowText);
-}
-
 function onSpaceTab(e) {
   e.preventDefault();
   const isTab = e.key === "Tab";
@@ -94,9 +59,8 @@ function updateOrAddNewLine() {
   activeSpanSubstringIdx = 0;
   if (activeRowIndex === IDE.children.length - 1) {
     activeSpanSubstringIdx = 0;
-    const row = addNewLine();
+    const row = addNewLine(++activeRowIndex);
     slicedData && constructRowSpans(row, slicedData);
-    activeRowIndex++;
     return getLastRowChild();
   }
   //adding in between

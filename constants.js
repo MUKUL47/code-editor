@@ -3,6 +3,7 @@ const constants = Object.freeze({
   START_SLICE_IDX: "startsliceidx",
   END_SLICE_IDX: "endsliceidx",
   ROW_INDEX: "row-index",
+  ROW_ORIGINAL_INDEX: "row-original-index",
   CLASS_NEW_LINE: "newline",
   TEXT_SELECTION_DIR: {
     xAxis: "xAxis",

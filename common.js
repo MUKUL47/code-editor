@@ -55,3 +55,12 @@ function getCarentPosition(x, y) {
     document.caretRangeFromPoint?.(x, y) || document.getCarentPosition?.(x, y)
   );
 }
+
+/**
+ * concat list of strings
+ * @param {string[]} strs
+ * @returns
+ */
+function concat(...strs) {
+  return strs.filter(String).join("");
+}
