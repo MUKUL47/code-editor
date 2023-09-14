@@ -18,7 +18,7 @@ function newRow(n) {
 /**
  * spans of row index
  * @param {number} index index
- * @returns HTMLElement[]
+ * @returns {HTMLCollection}
  */
 function getSpanChildren(index) {
   const row = getRowById(index);
@@ -28,7 +28,7 @@ function getSpanChildren(index) {
 /**
  * spans of row by id
  * @param {number} index
- * @returns HTMLElement[]
+ * @returns {HTMLElement[]}
  */
 function getRowById(index) {
   return IDE.children[index == undefined ? activeRowIndex : index] ?? null;

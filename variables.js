@@ -15,3 +15,6 @@ let mouseUp = true;
 let lastYAxisMovement = -1;
 let textSelectionDirection = null;
 let newLineCounter = -1;
+//
+let originalShiftKeyboardX = -1;
+let originalShiftKeyboardY = -1;

@@ -1,5 +1,39 @@
+/**
+ *
+ * @param {KeyboardEvent} event
+ */
 function onArrowMovement(event) {
   event.preventDefault();
+  updateLastShiftKey();
+  handleArrowMovement(event);
+  if (wasShiftKey(event)) {
+    console.log(
+      calculateSpanViaIndexes(originalShiftKeyboardX, originalShiftKeyboardY)
+    );
+  }
+}
+
+function updateLastShiftKey() {
+  if (
+    event.shiftKey &&
+    !!!originalShiftKeyboardY &&
+    !!!originalShiftKeyboardX
+  ) {
+    originalShiftKeyboardY = activeRowIndex;
+    originalShiftKeyboardX = activeSpanSubstringIdx;
+  }
+}
+
+function wasShiftKey(e) {
+  if (e.shiftKey && originalShiftKeyboardY > -1 && originalShiftKeyboardX > -1)
+    return true;
+  removePreviousTextSelection();
+  originalShiftKeyboardY = null;
+  originalShiftKeyboardX = null;
+  return false;
+}
+
+function handleArrowMovement(event) {
   const direction = event.key.toLowerCase();
   let row = getRowById();
   let current = row.innerText.length;
@@ -43,5 +77,4 @@ function onArrowMovement(event) {
         ? activeSpanSubstringIdx - 1
         : activeSpanSubstringIdx;
   }
-  return;
 }

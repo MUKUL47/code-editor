@@ -143,7 +143,7 @@ function calculateELastPosition(rowId, e) {
   }
   return getTextWidth(
     rowId,
-    e.commonAncestorContainer.parentElement,
+    e?.commonAncestorContainer?.parentElement || e,
     e.startOffset
   );
 }

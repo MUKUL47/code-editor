@@ -119,3 +119,21 @@ function handleInputWhileTextSelected(currentRowText, data) {
     };
   }
 }
+
+/**
+ *
+ * @param {number} xIndex
+ * @param {number} yIndex
+ * @returns {{ e: HTMLSpanElement, offset: number }}
+ */
+function calculateSpanViaIndexes(xIndex, yIndex) {
+  const row = getRowById(yIndex).children;
+  for (let i = 0; i < row.length; i++) {
+    const prevLength = +row[i].getAttribute("prevLength");
+    if (prevLength >= xIndex)
+      return {
+        e: row[i],
+        offset: prevLength - xIndex,
+      };
+  }
+}
