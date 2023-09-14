@@ -10,4 +10,24 @@ const constants = Object.freeze({
     up: "up",
     down: "down",
   },
+  KEYSTROKES_COUNT: {
+    DEFAULT: 1,
+    TAB: 3,
+  },
+  KEYSTROKES: {
+    TAB: "tab",
+    SPACE: "space",
+  },
+  ARROW: {
+    _: "Arrow",
+    LEFT: "ArrowLeft",
+    RIGHT: "ArrowRight",
+    DOWN: "ArrowDown",
+    UP: "ArrowUp",
+  },
+  KEYBOARD_SPECIALS: {
+    CONTROL: "control",
+    ENTER: "enter",
+    BACKSPACE: "backspace",
+  },
 });

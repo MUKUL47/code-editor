@@ -43,7 +43,7 @@ function addNewLine(pointer) {
   const e = newRow(pointer != undefined ? pointer : ++newLineCounter);
   // rowLineMap.set(newLineCounter, e);
   IDE.appendChild(e);
-  activeSpanElement = addNewTextSpan();
+  addNewTextSpan();
   return e;
 }
 
@@ -135,17 +135,4 @@ function getRowByIndex(index) {
       return [IDE.children[i], i];
   }
   return [null, -1];
-}
-
-/**
- * removes row span
- * @description Must always use this func to delete row
- * @param { HTMLElement[]} span
- */
-function removeRows(spans) {
-  for (const span of spans) {
-    const idx = span.getAttribute(constants.ROW_INDEX);
-    rowLineMap.delete(idx);
-    span.remove();
-  }
 }

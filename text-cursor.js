@@ -7,17 +7,13 @@ function addTextCursor(e) {
     }
     const caretRange = getCarentPosition(e.clientX, e.clientY);
     if (!caretRange) return;
+    const spanE = caretRange.startContainer.parentElement;
     activeSpanSubstringIdx = getSubstringSliceIndex(
-      caretRange.startContainer.parentElement,
+      spanE,
       caretRange.startOffset
     );
-    activeSpanElement = caretRange.startContainer.parentElement;
     updateTextCursor({
-      left: getTextWidth(
-        activeRowIndex,
-        activeSpanElement,
-        caretRange.startOffset
-      )[0],
+      left: getTextWidth(activeRowIndex, spanE, caretRange.startOffset)[0],
     });
   } catch (e) {
     console.log(e);

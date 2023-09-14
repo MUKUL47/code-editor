@@ -72,3 +72,50 @@ function reorderRowsIndexOnDelete(rowIndex = activeRowIndex, margin = 1) {
     IDE.children[i].style.top = `${(i - margin) * ROW_HEIGHT}px`;
   }
 }
+
+/**
+ *
+ * @param {string} currentRowText
+ * @param {string} data
+ * @return {{value?: string, updatedRow?: HTMLElement}}
+ */
+function handleInputWhileTextSelected(currentRowText, data) {
+  const { partialSelections, removedCount } = removeSelections();
+  if (partialSelections.length === 0) return {};
+  //update activeRowIndex based on how many full selected rows were removed
+  if (textSelectionDirection === constants.TEXT_SELECTION_DIR.down) {
+    activeRowIndex -= removedCount;
+  }
+  if (partialSelections.length === 2) {
+    const {
+      firstRowSlice,
+      initialSliceIdx,
+      secondERow,
+      secondERowIdx,
+      secondRowSlice,
+      firstERow,
+    } = getTwoLineSelectionsSliceIdxs(partialSelections);
+    if (textSelectionDirection === constants.TEXT_SELECTION_DIR.down) {
+      activeRowIndex -= 1;
+    }
+    activeSpanSubstringIdx = initialSliceIdx;
+    reorderRowsIndexOnDelete(secondERowIdx);
+    secondERow.remove();
+    return {
+      value: concat(firstRowSlice, data, secondRowSlice),
+      updatedRow: firstERow,
+    };
+  }
+  if (partialSelections.length === 1) {
+    const { startSliceIdx, endSliceIdx } =
+      getSingleLineSelectionsSliceIdx(partialSelections);
+    activeSpanSubstringIdx -= endSliceIdx - startSliceIdx;
+    return {
+      value: concat(
+        currentRowText.slice(0, startSliceIdx),
+        data,
+        currentRowText.slice(endSliceIdx)
+      ),
+    };
+  }
+}

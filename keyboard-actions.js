@@ -7,18 +7,6 @@ function updateActiveRowIdx(e) {
   activeRowIndex = activeRowIndex === -1 ? 0 : activeRowIndex;
 }
 
-function onSpaceTab(e) {
-  e.preventDefault();
-  const isTab = e.key === "Tab";
-  const row = getRowById();
-  const currentRowHTML = row.innerText;
-  const newRowText = `${currentRowHTML.slice(0, activeSpanSubstringIdx)}${
-    isTab ? "   " : " "
-  }${currentRowHTML.slice(activeSpanSubstringIdx)}`;
-  constructRowSpans(row, newRowText);
-  activeSpanSubstringIdx += isTab ? 3 : 1;
-}
-
 function onBackspace(e) {
   const row = getRowById();
   const currentRowHTML = row.innerText;
@@ -30,7 +18,7 @@ function onBackspace(e) {
     const previousRow = getRowById();
     activeSpanSubstringIdx = previousRow.innerText.length;
     constructRowSpans(previousRow, previousRow.innerText + currentRowHTML);
-    removeRows([row]);
+    row.remove();
     return;
   }
   let sliceIndex = 1;

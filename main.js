@@ -5,19 +5,19 @@ const main = () => {
     const keyCode = event.keyCode || event.which;
     const key = event.key;
     switch (!!1) {
-      case ["space", "tab"].includes(code):
-        onSpaceTab(event);
-        break;
-      case key.includes("Arrow"):
+      case key.includes(constants.ARROW._):
         onArrowMovement(event);
         break;
+      case [constants.KEYSTROKES.SPACE, constants.KEYSTROKES.TAB].includes(
+        code
+      ):
       case keyCode >= 32 && keyCode <= 126:
         onKeystroke(event);
         break;
-      case code === "backspace":
+      case code === constants.KEYBOARD_SPECIALS.BACKSPACE:
         onBackspace(event);
         break;
-      case code === "enter":
+      case code === constants.KEYBOARD_SPECIALS.ENTER:
         updateOrAddNewLine();
         break;
     }

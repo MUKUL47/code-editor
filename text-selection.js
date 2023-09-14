@@ -147,3 +147,97 @@ function calculateELastPosition(rowId, e) {
     e.startOffset
   );
 }
+
+/**
+ * removes full selected selections and return remainingSelections along with removedCount
+ * @returns {{ removedCount: number, partialSelections: HTMLCollection }}
+ */
+function removeSelections() {
+  const selections = getTextSelections();
+  if (selections.length === 0)
+    return {
+      removedCount: 0,
+      partialSelections: [],
+    };
+  let removedCount = 0;
+  const partialSelections = [];
+  for (let selection of selections) {
+    //iterate each selection and remove all covered up rows first;
+    const endSlice = +selection.getAttribute(constants.END_SLICE_IDX);
+    const rowIndex = selection.getAttribute(constants.ROW_INDEX);
+    //if start and end coordinate is same as the width of the row
+    //remove it reorder rows
+    if (endSlice === +selection.style.width.replace("px", "")) {
+      const [rowEle, rowOriginalIndex] = getRowByIndex(rowIndex);
+      reorderRowsIndexOnDelete(rowOriginalIndex);
+      rowEle.remove();
+      removedCount++;
+    } else {
+      partialSelections.push(selection);
+    }
+  }
+  return {
+    removedCount,
+    partialSelections,
+  };
+}
+
+/**
+ *
+ * @param {HTMLCollection} partialSelections
+ * @returns {void | {
+ * firstRowSlice: string,firstERow:HTMLElement, secondRowSlice: string, initialSliceIdx: number, secondERowIdx: number,secondERow: HTMLElement}}
+ */
+function getTwoLineSelectionsSliceIdxs(partialSelections) {
+  if (partialSelections.length !== 2) return;
+  const [firstE, secondE] = sortRemainingSelections(...partialSelections);
+  const [firstERow] = getRowByIndex(firstE.getAttribute(constants.ROW_INDEX));
+  const [secondERow, secondERowIdx] = getRowByIndex(
+    secondE.getAttribute(constants.ROW_INDEX)
+  );
+  const initialSliceIdx = +firstE.getAttribute(constants.START_SLICE_IDX);
+  //[(UNSELECTED) HEY THERE][(SELECTED) HOW ARE YOU] ROW-1
+  //[(SELECTED) I'AM FINE][(UNSELECTED) ?? ] ROW-2
+  //FINAL - HEY THERE [NEW KEY] ??
+  return {
+    firstRowSlice: firstERow.innerText.slice(0, initialSliceIdx),
+    secondRowSlice: secondERow.innerText.slice(
+      +secondE.getAttribute(constants.END_SLICE_IDX)
+    ),
+    initialSliceIdx,
+    secondERowIdx,
+    secondERow,
+    firstERow,
+  };
+}
+
+/**
+ *
+ * @param {HTMLCollection} partialSelections
+ * @returns {{startSliceIdx: number, endSliceIdx: number}}
+ */
+function getSingleLineSelectionsSliceIdx(partialSelections) {
+  //xAxis selection
+  //slice the data normally
+  // [(UNSELECTED) HEY HOW] (START_SLICE_IDX) [(SELECTED)ARE] END_SLICE_IDX [(UNSELECTED) DOING] ??
+  if (partialSelections.length !== 1) return;
+  const singleSelection = partialSelections[0];
+  const startSliceIdx = +singleSelection.getAttribute(
+    constants.START_SLICE_IDX
+  );
+  const endSliceIdx = +singleSelection.getAttribute(constants.END_SLICE_IDX);
+
+  return { startSliceIdx, endSliceIdx };
+}
+
+/**
+ *sort 2 selections based on height
+ * @param {HTMLSpanElement} s1
+ * @param {HTMLSpanElement} s2
+ * @returns {[HTMLSpanElement, HTMLSpanElement]}
+ */
+function sortRemainingSelections(s1, s2) {
+  if (+s1.style.top.replace("px", "") > +s2.style.top.replace("px", ""))
+    return [s2, s1];
+  return [s1, s2];
+}
