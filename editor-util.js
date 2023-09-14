@@ -109,6 +109,7 @@ function constructRowSpans(row, newRowText) {
  * removes active text-selection
  */
 function removePreviousTextSelection() {
+  console.log(arguments);
   TEXT_SELECTION.innerHTML = "";
 }
 

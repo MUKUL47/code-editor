@@ -39,6 +39,15 @@ function onMouseSelection(e) {
     ideMouseUpX,
     Math.ceil(ideMouseUpY / ROW_HEIGHT) * ROW_HEIGHT
   );
+  initializeSelection({ startE, endE, sourceRowIdx, targetRowIdx });
+}
+
+/**
+ *
+ * @param {{ startE: HTMLSpanElement, endE: HTMLSpanElement, sourceRowIdx: number, targetRowIdx:number }} param1
+ * @returns {void}
+ */
+function initializeSelection({ startE, endE, sourceRowIdx, targetRowIdx }) {
   let selectionSpans = [];
   if (sourceRowIdx != targetRowIdx) {
     if (sourceRowIdx < targetRowIdx) {

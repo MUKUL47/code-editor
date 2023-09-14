@@ -4,24 +4,27 @@ const main = () => {
     const code = event.code.toLowerCase(); //Alt Space
     const keyCode = event.keyCode || event.which;
     const key = event.key;
+    let eventResponse = {};
     switch (!!1) {
       case key.includes(constants.ARROW._):
-        onArrowMovement(event);
+        eventResponse = onArrowMovement(event) || {};
         break;
       case [constants.KEYSTROKES.SPACE, constants.KEYSTROKES.TAB].includes(
         code
       ):
       case keyCode >= 32 && keyCode <= 126:
-        onKeystroke(event);
+        eventResponse = onKeystroke(event) || {};
         break;
       case code === constants.KEYBOARD_SPECIALS.BACKSPACE:
-        onBackspace(event);
+        eventResponse = onBackspace(event) || {};
         break;
       case code === constants.KEYBOARD_SPECIALS.ENTER:
-        updateOrAddNewLine();
+        eventResponse = updateOrAddNewLine() || {};
         break;
     }
-    removePreviousTextSelection();
+    if (!!!eventResponse.disableSelectionReset) {
+      removePreviousTextSelection();
+    }
     updateTextCursorOnEvent();
   });
   IDE.addEventListener("mousedown", (e) => onMouseDown(e));

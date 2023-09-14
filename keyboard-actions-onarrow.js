@@ -1,35 +1,59 @@
 /**
  *
  * @param {KeyboardEvent} event
+ * @returns {{ disableSelectionReset: boolean }} - if shift key is active and selection is in progress
  */
 function onArrowMovement(event) {
   event.preventDefault();
-  updateLastShiftKey();
+  updateLastShiftKey(event);
   handleArrowMovement(event);
+  /**
+   * @todo BUG source target arent in sync
+   */
   if (wasShiftKey(event)) {
-    console.log(
-      calculateSpanViaIndexes(originalShiftKeyboardX, originalShiftKeyboardY)
-    );
+    updateTextCursorOnEvent();
+    TEXT_CURSOR.style.zIndex = -11;
+    const currentBounds = TEXT_CURSOR.getBoundingClientRect();
+    const endE = getCarentPosition(currentBounds.x, currentBounds.y);
+    TEXT_CURSOR.style.zIndex = 0;
+    if (!endE || !originalShiftKeyboardSpanE) return;
+    initializeSelection({
+      endE,
+      startE: originalShiftKeyboardSpanE,
+      sourceRowIdx: originalShiftKeyboardRowIdx,
+      targetRowIdx: activeRowIndex,
+    });
+    return { disableSelectionReset: true };
   }
+  return { disableSelectionReset: false };
 }
 
-function updateLastShiftKey() {
-  if (
-    event.shiftKey &&
-    !!!originalShiftKeyboardY &&
-    !!!originalShiftKeyboardX
-  ) {
-    originalShiftKeyboardY = activeRowIndex;
-    originalShiftKeyboardX = activeSpanSubstringIdx;
+/**
+ *
+ * @param {KeyboardEvent} event
+ * @returns {void}
+ */
+function updateLastShiftKey(event) {
+  if (event.shiftKey && !!!originalShiftKeyboardSpanE) {
+    originalShiftKeyboardRowIdx = activeRowIndex;
+    TEXT_CURSOR.style.zIndex = -11;
+    const bounds = TEXT_CURSOR.getBoundingClientRect();
+    originalShiftKeyboardSpanE = getCarentPosition(bounds.x, bounds.y);
+    TEXT_CURSOR.style.zIndex = 0;
   }
 }
 
 function wasShiftKey(e) {
-  if (e.shiftKey && originalShiftKeyboardY > -1 && originalShiftKeyboardX > -1)
+  if (
+    e.shiftKey &&
+    originalShiftKeyboardRowIdx > -1 &&
+    !!originalShiftKeyboardSpanE
+  ) {
     return true;
+  }
   removePreviousTextSelection();
-  originalShiftKeyboardY = null;
-  originalShiftKeyboardX = null;
+  originalShiftKeyboardRowIdx = null;
+  originalShiftKeyboardSpanE = null;
   return false;
 }
 
