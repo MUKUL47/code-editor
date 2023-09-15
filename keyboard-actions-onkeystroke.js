@@ -1,5 +1,4 @@
 /**
- *
  * @param {Event} e
  */
 function onKeystroke(e) {
