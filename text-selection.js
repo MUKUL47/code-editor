@@ -135,14 +135,14 @@ function createSelection(yAxis, startEle, endEle) {
     constants.ROW_INDEX,
     IDE.children[yAxis].getAttribute(constants.ROW_INDEX)
   );
-  s.style.left = `${Math.min(endPosition, startPosition)}px`;
-  s.style.width = `${
+  s.style.left = px(Math.min(endPosition, startPosition));
+  s.style.width = px(
     startPosition > endPosition
       ? startPosition - endPosition
       : endPosition - startPosition
-  }px`;
-  s.style.height = `${ROW_HEIGHT}px`;
-  s.style.top = `${yAxis * ROW_HEIGHT}px`;
+  );
+  s.style.height = px(ROW_HEIGHT);
+  s.style.top = px(yAxis * ROW_HEIGHT);
   return s;
 }
 function calculateELastPosition(rowId, e) {

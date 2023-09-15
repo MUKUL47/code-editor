@@ -6,7 +6,7 @@
 function newRow(n) {
   return E("div", {
     style: {
-      top: `${n * ROW_HEIGHT}px`,
+      top: px(n * ROW_HEIGHT),
     },
     attributes: {
       [constants.ROW_INDEX]: Math.random(),

@@ -9,7 +9,11 @@ function onKeystroke(e) {
   let row = getRowById();
   const currentRowHTML = row.innerText;
   const k = isTab ? "   " : e.key;
-  const { updatedRow, value } = handleInputWhileTextSelected(currentRowHTML, k);
+  const { updatedRow, value } = handleInputWhileTextSelected({
+    currentRowText: currentRowHTML,
+    data: k,
+    ignoreSubstringUpdate: e.key.includes(" "),
+  });
   let newRowText =
     value ??
     concat(

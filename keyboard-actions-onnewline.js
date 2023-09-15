@@ -2,10 +2,10 @@ function updateOrAddNewLine() {
   //
   let row = getRowById();
   const currentRowHTML = row.innerText;
-  const { updatedRow, value } = handleInputWhileTextSelected(
-    currentRowHTML,
-    ""
-  );
+  const { updatedRow, value } = handleInputWhileTextSelected({
+    currentRowText: currentRowHTML,
+    data: "",
+  });
   if (updatedRow) constructRowSpans(updatedRow || row, value || "");
   //adding line in the end
   const slicedData = getSliceDataIFF();
@@ -18,7 +18,7 @@ function updateOrAddNewLine() {
   }
   //adding in between
   for (let i = Number(activeRowIndex) + 1; i < IDE.children.length; i++) {
-    IDE.children[i].style.top = `${(i + 1) * ROW_HEIGHT}px`;
+    IDE.children[i].style.top = px((i + 1) * ROW_HEIGHT);
   }
   getRowById().insertAdjacentElement("afterend", newRow(++activeRowIndex));
   addNewTextSpan();

@@ -35,22 +35,22 @@ function updateCursorOutsideVicinity(event) {
 }
 function updateTextCursor(customCoords) {
   const { left, top } = customCoords || {};
-  TEXT_CURSOR.style.top = `${
+  TEXT_CURSOR.style.top = px(
     (top != undefined ? top : activeRowIndex) * ROW_HEIGHT
-  }px`;
+  );
   TEXT_CURSOR.style.left =
     left != undefined
-      ? left + "px"
-      : getLastRowChild().getBoundingClientRect().right + "px";
+      ? px(left)
+      : px(getLastRowChild().getBoundingClientRect().right);
 }
 
 function updateTextCursorOnEvent() {
-  TEXT_CURSOR.style.top = `${activeRowIndex * ROW_HEIGHT}px`;
+  TEXT_CURSOR.style.top = px(activeRowIndex * ROW_HEIGHT);
   const s = E("span", {
     style: {
       opacity: 0,
       position: "absolute",
-      left: "0px",
+      left: px(0),
     },
   });
   const children = getSpanChildren();
@@ -62,6 +62,6 @@ function updateTextCursorOnEvent() {
     activeSpanIndex > 0
       ? children[activeSpanIndex - 1].getBoundingClientRect().right
       : 0;
-  TEXT_CURSOR.style.left = `${s.getBoundingClientRect().width + existingLen}px`;
+  TEXT_CURSOR.style.left = px(s.getBoundingClientRect().width + existingLen);
   s.remove();
 }

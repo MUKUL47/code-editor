@@ -75,11 +75,14 @@ function reorderRowsIndexOnDelete(rowIndex = activeRowIndex, margin = 1) {
 
 /**
  *
- * @param {string} currentRowText
- * @param {string} data
+ * @param {{ data: string, currentRowText: string, ignoreSubstringUpdate?: boolean}} currentRowText
  * @return {{value?: string, updatedRow?: HTMLElement}}
  */
-function handleInputWhileTextSelected(currentRowText, data) {
+function handleInputWhileTextSelected({
+  currentRowText,
+  data,
+  ignoreSubstringUpdate,
+}) {
   const { partialSelections, removedCount } = removeSelections();
   if (partialSelections.length === 0) return {};
   //update activeRowIndex based on how many full selected rows were removed
@@ -96,7 +99,8 @@ function handleInputWhileTextSelected(currentRowText, data) {
       firstERow,
     } = getTwoLineSelectionsSliceIdxs(partialSelections);
     if (textSelectionDirection === constants.TEXT_SELECTION_DIR.down) {
-      activeRowIndex -= 1;
+      const newRowIdx = activeRowIndex - 1;
+      activeRowIndex = newRowIdx > -1 ? newRowIdx : 0;
     }
     activeSpanSubstringIdx = initialSliceIdx;
     reorderRowsIndexOnDelete(secondERowIdx);
@@ -109,7 +113,7 @@ function handleInputWhileTextSelected(currentRowText, data) {
   if (partialSelections.length === 1) {
     const { startSliceIdx, endSliceIdx } =
       getSingleLineSelectionsSliceIdx(partialSelections);
-    activeSpanSubstringIdx -= endSliceIdx - startSliceIdx;
+    activeSpanSubstringIdx = startSliceIdx;
     return {
       value: concat(
         currentRowText.slice(0, startSliceIdx),

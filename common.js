@@ -48,7 +48,7 @@ function createNewSpan(data) {
  *
  * @param {number} x
  * @param {number} y
- * @returns Range
+ * @returns {Range}
  */
 function getCarentPosition(x, y) {
   return (
@@ -63,4 +63,16 @@ function getCarentPosition(x, y) {
  */
 function concat(...strs) {
   return strs.filter(String).join("");
+}
+
+/**
+ *
+ * @param  {...Number} n
+ * @returns {`${Number}px`}
+ */
+function px(...n) {
+  return n
+    .reduce((a, c) => (isNaN(+a) ? 0 : +a) + c, 0)
+    .toString()
+    .concat("px");
 }
