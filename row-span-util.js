@@ -124,18 +124,16 @@ function handleInputWhileTextSelected(currentRowText, data) {
  *
  * @param {number} xIndex
  * @param {number} yIndex
- * @returns {{ e: HTMLSpanElement, startOffset: number }}
+ * @returns {HTMLSpanElement}
  */
 function calculateSpanViaIndexes(xIndex, yIndex) {
   const row = getRowById(yIndex).children;
   for (let i = 0; i < row.length; i++) {
     const prevLength = +row[i].getAttribute("prevLength");
-    if (prevLength >= xIndex) {
-      row[i].startOffset = prevLength - xIndex;
-      return {
-        e: row[i],
-        startOffset: row[i].startOffset,
-      };
+    if (xIndex >= prevLength) {
+      const node = row[i].cloneNode(true);
+      node.startOffset = xIndex - prevLength;
+      return node;
     }
   }
 }

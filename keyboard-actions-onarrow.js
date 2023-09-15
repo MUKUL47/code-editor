@@ -5,20 +5,11 @@
  */
 function onArrowMovement(event) {
   event.preventDefault();
-  updateLastShiftKey(event);
   handleArrowMovement(event);
-  /**
-   * @todo BUG source target arent in sync
-   */
-  if (wasShiftKey(event)) {
+  if (!!event.shiftKey) {
     updateTextCursorOnEvent();
-    TEXT_CURSOR.style.zIndex = -11;
-    const currentBounds = TEXT_CURSOR.getBoundingClientRect();
-    const endE = getCarentPosition(currentBounds.x, currentBounds.y);
-    TEXT_CURSOR.style.zIndex = 0;
-    if (!endE || !originalShiftKeyboardSpanE) return;
     initializeSelection({
-      endE,
+      endE: calculateSpanViaIndexes(activeSpanSubstringIdx, activeRowIndex),
       startE: originalShiftKeyboardSpanE,
       sourceRowIdx: originalShiftKeyboardRowIdx,
       targetRowIdx: activeRowIndex,
@@ -34,27 +25,12 @@ function onArrowMovement(event) {
  * @returns {void}
  */
 function updateLastShiftKey(event) {
-  if (event.shiftKey && !!!originalShiftKeyboardSpanE) {
-    originalShiftKeyboardRowIdx = activeRowIndex;
-    TEXT_CURSOR.style.zIndex = -11;
-    const bounds = TEXT_CURSOR.getBoundingClientRect();
-    originalShiftKeyboardSpanE = getCarentPosition(bounds.x, bounds.y);
-    TEXT_CURSOR.style.zIndex = 0;
-  }
-}
-
-function wasShiftKey(e) {
-  if (
-    e.shiftKey &&
-    originalShiftKeyboardRowIdx > -1 &&
-    !!originalShiftKeyboardSpanE
-  ) {
-    return true;
-  }
-  removePreviousTextSelection();
-  originalShiftKeyboardRowIdx = null;
-  originalShiftKeyboardSpanE = null;
-  return false;
+  if (event.shiftKey) return;
+  originalShiftKeyboardRowIdx = activeRowIndex;
+  originalShiftKeyboardSpanE = calculateSpanViaIndexes(
+    activeSpanSubstringIdx,
+    activeRowIndex
+  );
 }
 
 function handleArrowMovement(event) {

@@ -25,6 +25,7 @@ const main = () => {
     if (!!!eventResponse.disableSelectionReset) {
       removePreviousTextSelection();
     }
+    updateLastShiftKey(event);
     updateTextCursorOnEvent();
   });
   IDE.addEventListener("mousedown", (e) => onMouseDown(e));
