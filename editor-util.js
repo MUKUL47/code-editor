@@ -136,3 +136,11 @@ function getRowByIndex(index) {
   }
   return [null, -1];
 }
+
+/**
+ *
+ * @returns {number}
+ */
+function getEditerLeftCoord() {
+  return IDE.getBoundingClientRect().left;
+}

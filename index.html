@@ -47,6 +47,7 @@
       position: absolute;
       padding: 0px 0.35px;
       background: #000;
+      z-index: -1;
     }
     .text-selection:hover {
       cursor: text;
@@ -61,15 +62,23 @@
         opacity: 0.5;
       }
       50% {
-        opacity: 1;
       }
     }
     .text-selection {
       background-color: #ccffce52;
     }
+    #line-number {
+      font-family: "Inconsolata", monospace;
+      position: relative;
+      width: 30px;
+      padding-left: 10px;
+    }
   </style>
   <body>
-    <div id="ide"></div>
+    <div style="display: flex">
+      <!-- <div id="line-number"></div> -->
+      <div id="ide"></div>
+    </div>
     <div class="text-pipe" id="TEXT_CURSOR"></div>
     <div id="TEXT_SELECTION"></div>
   </body>
@@ -86,7 +95,9 @@
   <script src="./text-cursor.js"></script>
   <script src="./text-selection.js"></script>
   <script src="./row-span-util.js"></script>
+  <script src="./line-number.js"></script>
   <script src="./constants.js"></script>
+  <script src="./selection-util.js"></script>
   <!--  -->
   <!--  -->
   <!--  -->

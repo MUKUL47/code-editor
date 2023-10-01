@@ -18,3 +18,5 @@ let newLineCounter = -1;
 //
 let originalShiftKeyboardSpanE = null;
 let originalShiftKeyboardRowIdx = null;
+let LINE_NUMBER = window["line-number"];
+let mouseMoveTime = false;

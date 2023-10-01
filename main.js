@@ -27,10 +27,16 @@ const main = () => {
     }
     updateLastShiftKey(event);
     updateTextCursorOnEvent();
+    updateLineNumber();
   });
-  IDE.addEventListener("mousedown", (e) => onMouseDown(e));
+  IDE.addEventListener("mousedown", onMouseDown);
   IDE.addEventListener("mousemove", (e) => onMouseMove(e));
   IDE.addEventListener("mouseup", (e) => onMouseUp(e));
+  IDE.addEventListener("click", (e) => {
+    if (mouseMoveTime === false) {
+      removePreviousTextSelection();
+    }
+  });
 };
 
 document.addEventListener("DOMContentLoaded", main);

@@ -62,6 +62,6 @@ function updateTextCursorOnEvent() {
     activeSpanIndex > 0
       ? children[activeSpanIndex - 1].getBoundingClientRect().right
       : 0;
-  TEXT_CURSOR.style.left = px(s.getBoundingClientRect().width + existingLen);
+  TEXT_CURSOR.style.left = px(s.getBoundingClientRect().width, existingLen);
   s.remove();
 }

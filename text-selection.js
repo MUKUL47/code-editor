@@ -1,5 +1,4 @@
 //selection using mouse
-
 function onMouseDown(e) {
   mouseDownTime = Date.now();
   ideMouseDownX = e.clientX;
@@ -8,7 +7,10 @@ function onMouseDown(e) {
 }
 
 function onMouseMove(e) {
-  if (!!mouseUp) return;
+  if (!!mouseUp) {
+    return;
+  }
+  mouseMoveTime = Date.now();
   addTextCursor(e);
   onMouseSelection(e);
 }

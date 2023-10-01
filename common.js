@@ -21,7 +21,7 @@ function E(elementType, options = {}) {
 
   if (options.data) {
     for (const dataKey in options.data) {
-      element.dataset[dataKey] = options.data[dataKey];
+      element[dataKey] = options.data[dataKey];
     }
   }
 
@@ -75,4 +75,17 @@ function px(...n) {
     .reduce((a, c) => (isNaN(+a) ? 0 : +a) + c, 0)
     .toString()
     .concat("px");
+}
+
+/**
+ *
+ * @param  {...Function} fn
+ * @returns {(e: Event) => (Boolean|void);}
+ */
+function middlewares(...fn) {
+  return (e) => {
+    for (let f of fn) {
+      if (!!!f(e)) return;
+    }
+  };
 }
