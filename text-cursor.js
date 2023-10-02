@@ -23,7 +23,7 @@ function updateCursorOutsideVicinity(event) {
   if (IDE.offsetLeft >= event.clientX) {
     activeSpanSubstringIdx = 0;
     updateTextCursor({
-      left: 0,
+      left: editorLeft(),
     });
     return;
   }
@@ -34,14 +34,15 @@ function updateCursorOutsideVicinity(event) {
   });
 }
 function updateTextCursor(customCoords) {
+  console.log("updateTextCursor");
   const { left, top } = customCoords || {};
   TEXT_CURSOR.style.top = px(
     (top != undefined ? top : activeRowIndex) * ROW_HEIGHT
   );
   TEXT_CURSOR.style.left =
     left != undefined
-      ? px(left)
-      : px(getLastRowChild().getBoundingClientRect().right);
+      ? px(left, editorLeft())
+      : px(getLastRowChild().getBoundingClientRect().right, editorLeft());
 }
 
 function updateTextCursorOnEvent() {
@@ -62,6 +63,9 @@ function updateTextCursorOnEvent() {
     activeSpanIndex > 0
       ? children[activeSpanIndex - 1].getBoundingClientRect().right
       : 0;
-  TEXT_CURSOR.style.left = px(s.getBoundingClientRect().width, existingLen);
+  TEXT_CURSOR.style.left = px(
+    s.getBoundingClientRect().width,
+    existingLen || editorLeft()
+  );
   s.remove();
 }

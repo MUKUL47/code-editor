@@ -1,5 +1,6 @@
 const main = () => {
   addNewLine();
+  updateLineNumber();
   window.addEventListener("keydown", (event) => {
     const code = event.code.toLowerCase(); //Alt Space
     const keyCode = event.keyCode || event.which;
@@ -30,13 +31,12 @@ const main = () => {
     updateLineNumber();
   });
   IDE.addEventListener("mousedown", onMouseDown);
-  IDE.addEventListener("mousemove", (e) => onMouseMove(e));
-  IDE.addEventListener("mouseup", (e) => onMouseUp(e));
-  IDE.addEventListener("click", (e) => {
-    if (mouseMoveTime === false) {
+  IDE.addEventListener("mousemove", onMouseMove);
+  IDE.addEventListener("mouseup", onMouseUp);
+  IDE.addEventListener("click", () => {
+    if (!!!mouseMoveTime) {
       removePreviousTextSelection();
     }
   });
 };
-
 document.addEventListener("DOMContentLoaded", main);

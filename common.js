@@ -85,7 +85,7 @@ function px(...n) {
 function middlewares(...fn) {
   return (e) => {
     for (let f of fn) {
-      if (!!!f(e)) return;
+      f(e);
     }
   };
 }

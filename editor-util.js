@@ -141,6 +141,6 @@ function getRowByIndex(index) {
  *
  * @returns {number}
  */
-function getEditerLeftCoord() {
+function editorLeft() {
   return IDE.getBoundingClientRect().left;
 }

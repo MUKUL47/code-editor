@@ -8,6 +8,7 @@ function onMouseDown(e) {
 
 function onMouseMove(e) {
   if (!!mouseUp) {
+    mouseMoveTime = false;
     return;
   }
   mouseMoveTime = Date.now();
@@ -117,11 +118,8 @@ function initializeSelection({ startE, endE, sourceRowIdx, targetRowIdx }) {
 }
 
 function createSelection(yAxis, startEle, endEle) {
-  const [startPosition, startSliceIdx] = calculateELastPosition(
-    yAxis,
-    startEle
-  );
-  const [endPosition, endSliceIdx] = calculateELastPosition(yAxis, endEle);
+  let [startPosition, startSliceIdx] = calculateELastPosition(yAxis, startEle);
+  let [endPosition, endSliceIdx] = calculateELastPosition(yAxis, endEle);
   if (!endPosition) return null;
   const s = createNewSpan();
   s.style.position = "absolute";
@@ -137,7 +135,8 @@ function createSelection(yAxis, startEle, endEle) {
     constants.ROW_INDEX,
     IDE.children[yAxis].getAttribute(constants.ROW_INDEX)
   );
-  s.style.left = px(Math.min(endPosition, startPosition));
+  const min = Math.min(endPosition, startPosition);
+  s.style.left = px(min === 0 ? editorLeft() : min, editorLeft());
   s.style.width = px(
     startPosition > endPosition
       ? startPosition - endPosition

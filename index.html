@@ -75,11 +75,13 @@
     }
   </style>
   <body>
-    <div style="display: flex">
-      <!-- <div id="line-number"></div> -->
-      <div id="ide"></div>
+    <div style="display: flex; user-select: none">
+      <div id="line-number"></div>
+      <div>
+        <div class="text-pipe" id="TEXT_CURSOR"></div>
+        <div id="ide"></div>
+      </div>
     </div>
-    <div class="text-pipe" id="TEXT_CURSOR"></div>
     <div id="TEXT_SELECTION"></div>
   </body>
   <script src="./variables.js"></script>
