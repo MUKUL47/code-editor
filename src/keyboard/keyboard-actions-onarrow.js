@@ -1,9 +1,11 @@
+import { calculateSpanViaIndexes, getRowById } from "../util";
+
 /**
  *
  * @param {KeyboardEvent} event
  * @returns {{ disableSelectionReset: boolean }} - if shift key is active and selection is in progress
  */
-function onArrowMovement(event) {
+export function onArrowMovement(event) {
   event.preventDefault();
   handleArrowMovement(event);
   if (!!event.shiftKey) {
@@ -24,7 +26,7 @@ function onArrowMovement(event) {
  * @param {KeyboardEvent} event
  * @returns {void}
  */
-function updateLastShiftKey(event) {
+export function updateLastShiftKey(event) {
   if (event.shiftKey) return;
   originalShiftKeyboardRowIdx = activeRowIndex;
   originalShiftKeyboardSpanE = calculateSpanViaIndexes(
@@ -33,7 +35,7 @@ function updateLastShiftKey(event) {
   );
 }
 
-function handleArrowMovement(event) {
+export function handleArrowMovement(event) {
   const direction = event.key.toLowerCase();
   let row = getRowById();
   let current = row.innerText.length;

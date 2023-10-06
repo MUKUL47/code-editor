@@ -1,10 +1,13 @@
 //WIP improved text cursor util but oops doesnt work xD
 //remove user-select none
+
+import { concat, createNewSpan } from "../util";
+
 /**
  *
  * @returns {boolean}
  */
-function isSelection() {
+export function isSelection() {
   const selection = window.getSelection();
   return (
     selection.focusNode != selection.anchorNode ||
@@ -17,14 +20,14 @@ function isSelection() {
  *
  * @returns {boolean}
  */
-function isClick() {
+export function isClick() {
   return !isSelection();
 }
 
 /**
  *@returns {number}
  */
-function getClickCoordinates() {
+export function getClickCoordinates() {
   if (isSelection()) return -1;
   const selection = window.getSelection();
   const textData = selection.focusNode.nodeValue || "";

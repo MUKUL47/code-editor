@@ -31,3 +31,4 @@ const constants = Object.freeze({
     BACKSPACE: "backspace",
   },
 });
+export { constants };

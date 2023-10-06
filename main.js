@@ -1,4 +1,27 @@
-const main = () => {
+import { updateTextCursorOnEvent } from "./src/cursor/text-cursor";
+import {
+  onArrowMovement,
+  onBackspace,
+  onKeystroke,
+  updateLastShiftKey,
+  updateOrAddNewLine,
+} from "./src/keyboard";
+import { updateLineNumber } from "./src/line-number/line-number";
+import {
+  onMouseDown,
+  onMouseMove,
+  onMouseUp,
+} from "./src/selection/text-selection";
+import { constants } from "./src/state";
+import { IDEManagerState } from "./src/state/ide-state";
+import {
+  addNewLine,
+  initializeEditorDom,
+  removePreviousTextSelection,
+} from "./src/util";
+
+const main = (e) => {
+  // initializeEditorDom(e);
   addNewLine();
   updateLineNumber();
   window.addEventListener("keydown", (event) => {
@@ -39,4 +62,4 @@ const main = () => {
     }
   });
 };
-document.addEventListener("DOMContentLoaded", main);
+document.addEventListener("DOMContentLoaded", () => main("code_editor"));

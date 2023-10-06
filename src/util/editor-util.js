@@ -1,9 +1,11 @@
+import { constants } from "../state";
+import { E, createNewSpan, px } from "../util";
 /**
  * new row
  * @param {number} n
  * @returns HTMLElement
  */
-function newRow(n) {
+export function newRow(n) {
   return E("div", {
     style: {
       top: px(n * ROW_HEIGHT),
@@ -20,7 +22,7 @@ function newRow(n) {
  * @param {number} index index
  * @returns {HTMLCollection}
  */
-function getSpanChildren(index) {
+export function getSpanChildren(index) {
   const row = getRowById(index);
   return row.querySelectorAll("span");
 }
@@ -30,7 +32,7 @@ function getSpanChildren(index) {
  * @param {number} index
  * @returns {HTMLElement[]}
  */
-function getRowById(index) {
+export function getRowById(index) {
   return IDE.children[index == undefined ? activeRowIndex : index] ?? null;
 }
 
@@ -39,7 +41,7 @@ function getRowById(index) {
  * @param {number} pointer height yAxis
  * @returns HTMLElement
  */
-function addNewLine(pointer) {
+export function addNewLine(pointer) {
   const e = newRow(pointer != undefined ? pointer : ++newLineCounter);
   // rowLineMap.set(newLineCounter, e);
   IDE.appendChild(e);
@@ -52,7 +54,7 @@ function addNewLine(pointer) {
  * @param {string|number} data
  * @returns HTMLElement
  */
-function addNewTextSpan(data) {
+export function addNewTextSpan(data) {
   const e = createNewSpan(data);
   getRowById()?.appendChild(e);
   return e;
@@ -63,7 +65,7 @@ function addNewTextSpan(data) {
  * @param {number} index
  * @returns HTMLElement
  */
-function getLastRowChild(index) {
+export function getLastRowChild(index) {
   const row = getRowById(index);
   const nodes = row.querySelectorAll("span");
   return nodes?.[nodes.length - 1];
@@ -73,7 +75,7 @@ function getLastRowChild(index) {
  * @param {string} text
  * @returns Array
  */
-function getTextSplits(text) {
+export function getTextSplits(text) {
   return text.split(/(\s+|\.|\(|\))/).filter(String);
 }
 
@@ -83,7 +85,7 @@ function getTextSplits(text) {
  * @param {string} newRowText
  * @returns HTMLElement
  */
-function constructRowSpans(row, newRowText) {
+export function constructRowSpans(row, newRowText) {
   //DO NOT USE REGEX TRAVERSAL STRING NORMALLY
   const spans = getTextSplits(newRowText);
   row.innerHTML = "";
@@ -108,7 +110,7 @@ function constructRowSpans(row, newRowText) {
 /**
  * removes active text-selection
  */
-function removePreviousTextSelection() {
+export function removePreviousTextSelection() {
   TEXT_SELECTION.innerHTML = "";
 }
 
@@ -117,7 +119,7 @@ function removePreviousTextSelection() {
  * @param {HTMLElement} row
  * @returns {number}
  */
-function getRowIndex(row) {
+export function getRowIndex(row) {
   for (let i = 0; i < IDE.children.length; i++) {
     if (IDE.children[i] === row) return i;
   }
@@ -129,7 +131,7 @@ function getRowIndex(row) {
  * @param {number} index
  * @returns {HTMLElement}
  */
-function getRowByIndex(index) {
+export function getRowByIndex(index) {
   for (let i = 0; i < IDE.children.length; i++) {
     if (IDE.children[i].getAttribute(constants.ROW_INDEX) == index)
       return [IDE.children[i], i];
@@ -141,6 +143,33 @@ function getRowByIndex(index) {
  *
  * @returns {number}
  */
-function editorLeft() {
+export function editorLeft() {
   return IDE.getBoundingClientRect().left;
+}
+
+/**
+ *
+ * @param {string} e
+ * @returns {void}
+ */
+export function initializeEditorDom(e, state) {
+  const lineNumberDiv = E("div", { id: "line-number" });
+  const textPipeDiv = E("div", { class: "text-pipe", id: "TEXT_CURSOR" });
+  const ideDiv = E("div", { id: "ide" });
+  const textSelectionDiv = E("div", { id: "TEXT_SELECTION" });
+  const innerDiv = E("div");
+  innerDiv.appendChild(textPipeDiv);
+  innerDiv.appendChild(ideDiv);
+  const containerDiv = E("div");
+  containerDiv.appendChild(lineNumberDiv);
+  containerDiv.appendChild(innerDiv);
+  const editorDom = document.getElementById(e);
+  editorDom._state = state;
+  editorDom.appendChild(containerDiv);
+  editorDom.appendChild(textSelectionDiv);
+}
+
+export function getState() {
+  //TODO
+  return document.querySelector("code_editor[active='true']")._state;
 }

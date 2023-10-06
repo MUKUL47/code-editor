@@ -1,7 +1,11 @@
+import { constants } from "../state";
+import { concat, constructRowSpans, getRowById } from "../util";
+import { handleInputWhileTextSelected } from "../util";
+
 /**
  * @param {Event} e
  */
-function onKeystroke(e) {
+export function onKeystroke(e) {
   //e.key
   e.preventDefault();
   const isTab = e.key.toLowerCase() === constants.KEYSTROKES.TAB;

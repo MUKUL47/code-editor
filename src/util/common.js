@@ -4,7 +4,7 @@
  * @param {Object} options attriburtes, style, data.innerHTML, id, className
  * @returns Element
  */
-function E(elementType, options = {}) {
+export function E(elementType, options = {}) {
   const element = document.createElement(elementType);
 
   if (options.attributes) {
@@ -35,7 +35,7 @@ function E(elementType, options = {}) {
  * @param {string} data
  * @returns Element
  */
-function createNewSpan(data) {
+export function createNewSpan(data) {
   const e = E("span", {
     attributes: {
       content: !!1,
@@ -50,7 +50,7 @@ function createNewSpan(data) {
  * @param {number} y
  * @returns {Range}
  */
-function getCarentPosition(x, y) {
+export function getCarentPosition(x, y) {
   return (
     document.caretRangeFromPoint?.(x, y) || document.getCarentPosition?.(x, y)
   );
@@ -61,7 +61,7 @@ function getCarentPosition(x, y) {
  * @param {string[]} strs
  * @returns
  */
-function concat(...strs) {
+export function concat(...strs) {
   return strs.filter(String).join("");
 }
 
@@ -70,7 +70,7 @@ function concat(...strs) {
  * @param  {...Number} n
  * @returns {`${Number}px`}
  */
-function px(...n) {
+export function px(...n) {
   return n
     .reduce((a, c) => (isNaN(+a) ? 0 : +a) + c, 0)
     .toString()
@@ -82,7 +82,7 @@ function px(...n) {
  * @param  {...Function} fn
  * @returns {(e: Event) => (Boolean|void);}
  */
-function middlewares(...fn) {
+export function middlewares(...fn) {
   return (e) => {
     for (let f of fn) {
       f(e);

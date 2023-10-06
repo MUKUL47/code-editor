@@ -1,4 +1,7 @@
-function updateActiveRowIdx(e) {
+import { constants } from "../state";
+import { getRowIndex } from "../util";
+
+export function updateActiveRowIdx(e) {
   const parentE = e.srcElement.parentElement;
   const target = e.target;
   activeRowIndex = getRowIndex(

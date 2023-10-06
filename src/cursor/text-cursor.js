@@ -1,4 +1,16 @@
-function addTextCursor(e) {
+import {
+  E,
+  editorLeft,
+  getCarentPosition,
+  getLastRowChild,
+  getSpanChildren,
+  getSpanWithSubstrIndex,
+  getSubstringSliceIndex,
+  getTextWidth,
+  px,
+} from "../util";
+
+export function addTextCursor(e) {
   try {
     activeRowIndex =
       e.clientY <= ROW_HEIGHT ? 0 : Math.floor(e.clientY / ROW_HEIGHT); //* ROW_HEIGHT;
@@ -15,11 +27,9 @@ function addTextCursor(e) {
     updateTextCursor({
       left: getTextWidth(activeRowIndex, spanE, caretRange.startOffset)[0],
     });
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
 }
-function updateCursorOutsideVicinity(event) {
+export function updateCursorOutsideVicinity(event) {
   if (IDE.offsetLeft >= event.clientX) {
     activeSpanSubstringIdx = 0;
     updateTextCursor({
@@ -33,8 +43,7 @@ function updateCursorOutsideVicinity(event) {
     left: getTextWidth(activeRowIndex, e, e.innerText.length)[0],
   });
 }
-function updateTextCursor(customCoords) {
-  console.log("updateTextCursor");
+export function updateTextCursor(customCoords) {
   const { left, top } = customCoords || {};
   TEXT_CURSOR.style.top = px(
     (top != undefined ? top : activeRowIndex) * ROW_HEIGHT
@@ -45,7 +54,7 @@ function updateTextCursor(customCoords) {
       : px(getLastRowChild().getBoundingClientRect().right, editorLeft());
 }
 
-function updateTextCursorOnEvent() {
+export function updateTextCursorOnEvent() {
   TEXT_CURSOR.style.top = px(activeRowIndex * ROW_HEIGHT);
   const s = E("span", {
     style: {

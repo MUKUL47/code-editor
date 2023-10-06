@@ -1,12 +1,27 @@
+import { addTextCursor } from "../cursor/text-cursor";
+import { updateActiveRowIdx } from "../keyboard";
+import { constants } from "../state";
+import {
+  createNewSpan,
+  editorLeft,
+  getCarentPosition,
+  getLastRowChild,
+  getRowByIndex,
+  getTextSelections,
+  getTextWidth,
+  px,
+  removePreviousTextSelection,
+  reorderRowsIndexOnDelete,
+} from "../util";
+
 //selection using mouse
-function onMouseDown(e) {
-  mouseDownTime = Date.now();
+export function onMouseDown(e) {
   ideMouseDownX = e.clientX;
   ideMouseDownY = e.clientY;
   mouseUp = false;
 }
 
-function onMouseMove(e) {
+export function onMouseMove(e) {
   if (!!mouseUp) {
     mouseMoveTime = false;
     return;
@@ -15,12 +30,12 @@ function onMouseMove(e) {
   addTextCursor(e);
   onMouseSelection(e);
 }
-function onMouseUp(e) {
+export function onMouseUp(e) {
   addTextCursor(e);
   updateActiveRowIdx(e);
   mouseUp = true;
 }
-function onMouseSelection(e) {
+export function onMouseSelection(e) {
   ideMouseUpX = e.clientX;
   ideMouseUpY = e.clientY;
   if (
@@ -50,7 +65,12 @@ function onMouseSelection(e) {
  * @param {{ startE: HTMLSpanElement, endE: HTMLSpanElement, sourceRowIdx: number, targetRowIdx:number }} param1
  * @returns {void}
  */
-function initializeSelection({ startE, endE, sourceRowIdx, targetRowIdx }) {
+export function initializeSelection({
+  startE,
+  endE,
+  sourceRowIdx,
+  targetRowIdx,
+}) {
   let selectionSpans = [];
   if (sourceRowIdx != targetRowIdx) {
     if (sourceRowIdx < targetRowIdx) {
@@ -117,7 +137,7 @@ function initializeSelection({ startE, endE, sourceRowIdx, targetRowIdx }) {
   TEXT_SELECTION.append(...selectionSpans);
 }
 
-function createSelection(yAxis, startEle, endEle) {
+export function createSelection(yAxis, startEle, endEle) {
   let [startPosition, startSliceIdx] = calculateELastPosition(yAxis, startEle);
   let [endPosition, endSliceIdx] = calculateELastPosition(yAxis, endEle);
   if (!endPosition) return null;
@@ -146,7 +166,7 @@ function createSelection(yAxis, startEle, endEle) {
   s.style.top = px(yAxis * ROW_HEIGHT);
   return s;
 }
-function calculateELastPosition(rowId, e) {
+export function calculateELastPosition(rowId, e) {
   if (typeof e === "number") {
     e = e.toFixed(1);
     return [e, e];
@@ -162,7 +182,7 @@ function calculateELastPosition(rowId, e) {
  * removes full selected selections and return remainingSelections along with removedCount
  * @returns {{ removedCount: number, partialSelections: HTMLCollection }}
  */
-function removeSelections() {
+export function removeSelections() {
   const selections = getTextSelections();
   if (selections.length === 0)
     return {
@@ -198,7 +218,7 @@ function removeSelections() {
  * @returns {void | {
  * firstRowSlice: string,firstERow:HTMLElement, secondRowSlice: string, initialSliceIdx: number, secondERowIdx: number,secondERow: HTMLElement}}
  */
-function getTwoLineSelectionsSliceIdxs(partialSelections) {
+export function getTwoLineSelectionsSliceIdxs(partialSelections) {
   if (partialSelections.length !== 2) return;
   const [firstE, secondE] = sortRemainingSelections(...partialSelections);
   const [firstERow] = getRowByIndex(firstE.getAttribute(constants.ROW_INDEX));
@@ -226,7 +246,7 @@ function getTwoLineSelectionsSliceIdxs(partialSelections) {
  * @param {HTMLCollection} partialSelections
  * @returns {{startSliceIdx: number, endSliceIdx: number}}
  */
-function getSingleLineSelectionsSliceIdx(partialSelections) {
+export function getSingleLineSelectionsSliceIdx(partialSelections) {
   //xAxis selection
   //slice the data normally
   // [(UNSELECTED) HEY HOW] (START_SLICE_IDX) [(SELECTED)ARE] END_SLICE_IDX [(UNSELECTED) DOING] ??
@@ -246,7 +266,7 @@ function getSingleLineSelectionsSliceIdx(partialSelections) {
  * @param {HTMLSpanElement} s2
  * @returns {[HTMLSpanElement, HTMLSpanElement]}
  */
-function sortRemainingSelections(s1, s2) {
+export function sortRemainingSelections(s1, s2) {
   if (+s1.style.top.replace("px", "") > +s2.style.top.replace("px", ""))
     return [s2, s1];
   return [s1, s2];

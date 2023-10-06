@@ -1,4 +1,6 @@
-function updateLineNumber() {
+import { E, px } from "../util";
+
+export function updateLineNumber() {
   LINE_NUMBER.innerHTML = "";
   for (let i = 0; i < (IDE.children.length ?? 1); i++) {
     const e = E("div", {

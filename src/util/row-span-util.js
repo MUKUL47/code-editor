@@ -1,3 +1,11 @@
+import {
+  getSingleLineSelectionsSliceIdx,
+  removeSelections,
+} from "../selection/text-selection";
+import { constants } from "../state";
+import { concat, createNewSpan } from "./common";
+import { getRowById } from "./editor-util";
+
 /**
  * calculate row substring using prevLength + current element offset value;
  * create new span with new substring and append in IDE;
@@ -7,7 +15,7 @@
  * @param {number} offset active span substring index
  * @returns {number} right most coordinate of the active caret
  */
-function getTextWidth(rowIndex, span, offset) {
+export function getTextWidth(rowIndex, span, offset) {
   const row = getRowById(rowIndex);
   if (!row) return [0, 0];
   const sliceIdx = getSubstringSliceIndex(span, offset);
@@ -25,7 +33,7 @@ function getTextWidth(rowIndex, span, offset) {
  * @param {number} offset
  * @returns {number}
  */
-function getSubstringSliceIndex(span, offset) {
+export function getSubstringSliceIndex(span, offset) {
   return +span.getAttribute("prevLength") + offset;
 }
 /**
@@ -33,7 +41,7 @@ function getSubstringSliceIndex(span, offset) {
  * @param {HTMLElement} span
  * @returns {number}
  */
-function getSpanIndex(span) {
+export function getSpanIndex(span) {
   return +span.getAttribute("i");
 }
 
@@ -42,7 +50,7 @@ function getSpanIndex(span) {
  * @param {HTMLElement} currentRow
  * @returns {Array} [lastOffsetElement, length, remainingLength]
  */
-function getSpanWithSubstrIndex(currentRow) {
+export function getSpanWithSubstrIndex(currentRow) {
   const len = currentRow.length;
   let s = "";
   for (let i = 0; i < currentRow.length; i++) {
@@ -58,7 +66,7 @@ function getSpanWithSubstrIndex(currentRow) {
  *
  * @returns {HTMLCollection}
  */
-function getTextSelections() {
+export function getTextSelections() {
   return TEXT_SELECTION.children;
 }
 
@@ -67,7 +75,10 @@ function getTextSelections() {
  * @param {number} rowIndex
  * @param {number} margin how many rows
  */
-function reorderRowsIndexOnDelete(rowIndex = activeRowIndex, margin = 1) {
+export function reorderRowsIndexOnDelete(
+  rowIndex = activeRowIndex,
+  margin = 1
+) {
   for (let i = Number(rowIndex + margin); i < IDE.children.length; i++) {
     IDE.children[i].style.top = `${(i - margin) * ROW_HEIGHT}px`;
   }
@@ -78,7 +89,7 @@ function reorderRowsIndexOnDelete(rowIndex = activeRowIndex, margin = 1) {
  * @param {{ data: string, currentRowText: string, ignoreSubstringUpdate?: boolean}} currentRowText
  * @return {{value?: string, updatedRow?: HTMLElement}}
  */
-function handleInputWhileTextSelected({
+export function handleInputWhileTextSelected({
   currentRowText,
   data,
   ignoreSubstringUpdate,
@@ -130,7 +141,7 @@ function handleInputWhileTextSelected({
  * @param {number} yIndex
  * @returns {HTMLSpanElement}
  */
-function calculateSpanViaIndexes(xIndex, yIndex) {
+export function calculateSpanViaIndexes(xIndex, yIndex) {
   const row = getRowById(yIndex).children;
   for (let i = 0; i < row.length; i++) {
     const prevLength = +row[i].getAttribute("prevLength");

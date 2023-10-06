@@ -1,4 +1,14 @@
-function updateOrAddNewLine() {
+import {
+  addNewLine,
+  addNewTextSpan,
+  constructRowSpans,
+  getLastRowChild,
+  px,
+} from "../util";
+import { getRowById } from "../util";
+import { handleInputWhileTextSelected } from "../util";
+
+export function updateOrAddNewLine() {
   //
   let row = getRowById();
   const currentRowHTML = row.innerText;
@@ -26,7 +36,7 @@ function updateOrAddNewLine() {
   return getLastRowChild();
 }
 
-function getSliceDataIFF() {
+export function getSliceDataIFF() {
   const row = getRowById();
   const currentRowHTML = row.innerText;
   if (!activeSpanSubstringIdx) {

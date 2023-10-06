@@ -1,9 +1,15 @@
+import {
+  constructRowSpans,
+  getRowById,
+  handleInputWhileTextSelected,
+} from "../util";
+
 /**
  *
  * @param {Event} e
  * @returns {void}
  */
-function onBackspace(e) {
+export function onBackspace(e) {
   const row = getRowById();
   const currentRowHTML = row.innerText;
   const { updatedRow, value } = handleInputWhileTextSelected({
